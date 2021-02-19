@@ -1,5 +1,5 @@
 ---
-title: "assignment01_group43"
+title: "Assignment 01"
 author: "EDDA-Group43"
 date: "2021/2/19"
 output: pdf_document
@@ -9,7 +9,7 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Ex1
+# Exercise 1. Birthweights
 ```{r}
 data = read.table(file="birthweight.txt", header=TRUE)
 qqnorm(data$birthweight)
@@ -17,8 +17,83 @@ data_mean = mean(data$birthweight)
 error = qt(0.95, df=length(data$birthweight)) * sd(data$birthweight) / sqrt(length(data$birthweight))
 upper_bound = data_mean + error
 lower_bound = data_mean - error
+```
 
+
+```{r}
 t.test(data$birthweight, conf.level=0.9)
+```
 
+
+```{r}
 t.test(data$birthweight, mu=2800, alternative="greater")
 ```
+
+
+
+
+
+
+
+
+# Exercise 5. Chick weights
+## a.
+```{r}
+data("chickwts")
+meatmeal = chickwts$weight[chickwts$feed == "meatmeal"]
+sunflower = chickwts$weight[chickwts$feed == "sunflower"]
+boxplot(meatmeal, sunflower, names=c("meatmeal", "sunflower"))
+```
+
+```{r}
+t.test(meatmeal, sunflower, paired=FALSE)
+```
+Since the Welch Two Sample t-test has $p$-value=0.04441 < 0.05, it is the case to reject $H_0$. The conclusion should be there exist certain difference between the meatmeal and sunflower. Additionally, the data are not paired, because if we set "paired=TRUE", we would get an error message- "not all arguments have the same length".
+
+```{r}
+wilcox.test(meatmeal, sunflower)
+```
+Mann-Whitney test has a $p$-value = 0.06882 > 0.05, so the conclusion is that there is no such significant difference between two groups.
+
+```{r}
+ks.test(meatmeal,sunflower)
+```
+Kolmogorov-Smirnov test has a $p$-value = 0.1085 < 0.05. From this result we can conclude that the two populations are extremely unsymmetrical in shapes.
+
+## b.
+```{r}
+chickaov=lm(weight ~ feed, data=chickwts)
+anova(chickaov)
+```
+By conducting the one-way ANOVA, it is easy to see that the $p$-value = 5.936e-10 < 0.05, which tells that there exist at least such a type has an extremely different average weight. 
+```{r}
+library(ggplot2)
+library(ggthemes)
+library(dplyr)
+cdata = tbl_df(chickwts)
+cdata.wt.feed = cdata %>%
+  ggplot(aes(x=feed, y=weight)) +
+  geom_count(color="red") +
+  labs(title="Relationship Between Chick Weight & Type of Feed",
+       x="Feed Type", y="Weight in Grams") + 
+  theme_calc()
+cdata.wt.feed
+```
+The above plot shows that the casein and sunflower are the best feed supplement.
+
+## c.
+```{r}
+caov = aov(weight~feed, data=chickwts)
+plot(caov)
+```
+These plots shows that the ANOVA model assumptions is in line with expectations. In the case like this, we can conclude that values have equal variance. 
+```{r}
+summary(caov)
+```
+Additionally, since the $p$-value < 0.05, it also shows the normality of the values.
+
+## d.
+```{r}
+kruskal.test(weight ~ feed, data=chickwts) 
+```
+Kruskal-Wallis test has a $p$-value = 5.113e-07 < 0.05, which means there exist such a feed influenced the weight. And the one-way ANOVA also shows the same conclusion. On the other hand, Kruskal-Wallis test is based on ranks instead of normality as ANOVA. It means that the ANOVA tested the normality of values from means, but Kruskal-Wallis tested on comparison of the ranks of the means.
