@@ -1,43 +1,265 @@
 ---
-title: "Assignment 01"
-author: "EDDA-Group43"
+title: "Assignment 1"
+author: "Andrei Udriste, Xinyu Hu, Maria Gheorghe-Tudor - Group 43"
 date: "2021/2/19"
-output: pdf_document
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Exercise 1. Birthweights
+**Exercise 1.** *Birthweights*
+
+The data set birthweight.txt contains the birthweights of 188 newborn babies. We are interested in finding the underlying (population) mean mu of birthweights. a) Check normality of the data. Compute a point estimate for mu. Derive, assuming normality (irrespective of your conclusion about normality of the data), a bounded 90% confidence interval for mu.
+
 ```{r}
-data = read.table(file="birthweight.txt", header=TRUE)
-qqnorm(data$birthweight)
-data_mean = mean(data$birthweight)
-error = qt(0.95, df=length(data$birthweight)) * sd(data$birthweight) / sqrt(length(data$birthweight))
-upper_bound = data_mean + error
-lower_bound = data_mean - error
+data = read.table(file="birthweight.txt", header=TRUE)#Read the data from the file
+qqnorm(data$birthweight)#Create a QQ plot to check the normality of the data
 ```
 
+As it can be observed, the QQ-plot creates a straight line, this means that the data has a normal distribution.
 
 ```{r}
+data_mean = mean(data$birthweight)#Compute the estimate point for mu 
+cat("mu =", data_mean)
+```
+
+It can be observed that the value of mu is equal with 2913.293.
+
+```{r}
+error = qt(0.95, df=length(data$birthweight) - 1) * sd(data$birthweight) / sqrt(length(data$birthweight))#Compute the error for a 90% confidence interval
+upper_bound = data_mean + error#Compute the upper bound of the confidence interval
+lower_bound = data_mean - error#Compute the lower bound of te confidence interval
+cat("90% confidence interval = (", lower_bound,",", upper_bound, ")")
+```
+
+After computing the confidence interval, it can be observed that 90% of the data is between 2829.202 and 2997.384.
+
+b)  An expert claims that the mean birthweight is bigger than 2800, verify this claim by using a t-test. What is the outcome of the test if you take alpha = 0.1? And other values of alpha?
+
+```{r}
+t.test(data$birthweight, mu=2800, alternative="greater")#Compute the t-test to check if the mean is bigger than 2800
+```
+
+If an alpha of 0.1 is chosen then hypothesis H0 is rejected and H1 is accepted. In this case the mean of the data is bigger than 2800. The same result can be obtained if alpha is bigger than 0.013. If alpha has a value that is lower than 0.013 then hypothesis H0 will be accepted and H1 will be rejected.
+
+c)  In the R-output of the test from b), also a confidence interval is given, but why is it different from the confidence interval found in a) and why is it one-sided?
+
+```{r}
+t.test(data$birthweight)
 t.test(data$birthweight, conf.level=0.9)
 ```
 
+**Exercise 2.** *Power function of the t-test*
+
+We study the power function of the two-sample t-test (see Section 1.9 of Assignment 0). For n=m=30, mu=180, nu=175 and sd=5, generate 1000 samples x=rnorm(n,mu,sd) and y=rnorm(m,nu,sd), and record the 1000 p-values for testing H 0 : mu=nu. You can evaluate the power (at point nu=175) of this t-test as fraction of p-values that are smaller than 0.05.
 
 ```{r}
-t.test(data$birthweight, mu=2800, alternative="greater")
+#Initialize the variables that are going to be used to calculate the power
+n = m = 30
+mu = 180
+nu = 175
+sd = 5
+B = 1000
+p = numeric(B)
+
+#Calculate the p-value for a "B" number of times
+for(b in 1:B){
+  x = rnorm(n, mu, sd)#Initialize "n" data points from a normal distribution with a mean "mu" and a standard deviation "sd".
+  y = rnorm(m, nu, sd)#Initialize "m" data points from a normal distribution with a mean "nu" and a standard deviation "sd".
+  p[b] = t.test(x, y, var.equal=TRUE)[[3]]#Obtain the p-value after doing the t-test
+}
+power = mean(p<0.05)#Calculate the power function
+cat("The power of the test is equal with:", power)
 ```
 
+a)  Set n=m=30, mu=180 and sd=5. Calculate now the power of the t-test for every value of nu in the grid seq(175,185,by=0.25). Plot the power as a function of nu.
 
+```{r}
+#Initialize the variables that are going to be used to calculate the power
+n = m = 30
+mu = 180
+nu = 175
+sd = 5
+B = 1000
+p = numeric(B)
+nu = seq(175, 185, by=0.25)
+power_a = numeric(length(nu))
 
+#Calculate the power for each "nu" value
+for(i in 1:length(nu)){
+  #Calculate the p-value for a "B" number of times
+  for(b in 1:B){
+    x = rnorm(n, mu, sd)#Initialize "n" data points from a normal distribution with a mean "mu" and a standard deviation "sd".
+    y = rnorm(m, nu[i], sd)#Initialize "m" data points from a normal distribution with a mean "nu" and a standard deviation "sd".
+    p[b] = t.test(x, y, var.equal=TRUE)[[3]]#Obtain the p-value after doing the t-test
+  }
+  power_a[i] = mean(p<0.05)#Calculate the power function of a particular value of "nu"
+}
+plot(nu, power_a, type="l", col="red", ylab="Power")#Plot the power as a function of "nu"
+```
 
+b)  Set n=m=100, mu=180 and sd=5. Repeat the preceding exercise. Add the plot to the preceding plot.
 
+```{r}
+#Initialize the variables that are going to be used to calculate the power
+n = m = 100
+mu = 180
+nu = 175
+sd = 5
+B = 1000
+p = numeric(B)
+nu = seq(175, 185, by=0.25)
+power_b = numeric(length(nu))
 
+#Calculate the power for each "nu" value
+for(i in 1:length(nu)){
+  #Calculate the p-value for a "B" number of times
+  for(b in 1:B){
+    x = rnorm(n, mu, sd)#Initialize "n" data points from a normal distribution with a mean "mu" and a standard deviation "sd".
+    y = rnorm(m, nu[i], sd)#Initialize "m" data points from a normal distribution with a mean "nu" and a standard deviation "sd".
+    p[b] = t.test(x, y, var.equal=TRUE)[[3]]#Obtain the p-value after doing the t-test
+  }
+  power_b[i] = mean(p<0.05)#Calculate the power function of a particular value of "nu"
+}
+plot(nu, power_b, type="l", col="blue")#Plot the power as a function of "nu"
+```
 
+c)  Set n=m=30, mu=180 and sd=15. Repeat the preceding exercise.
 
-# Exercise 5. Chick weights
-## a.
+```{r}
+#Initialize the variables that are going to be used to calculate the power
+n = m = 30
+mu = 180
+nu = 175
+sd = 15
+B = 1000
+p = numeric(B)
+nu = seq(175, 185, by=0.25)
+power_c = numeric(length(nu))
+
+#Calculate the power for each "nu" value
+for(i in 1:length(nu)){
+  #Calculate the p-value for a "B" number of times
+  for(b in 1:B){
+    x = rnorm(n, mu, sd)#Initialize "n" data points from a normal distribution with a mean "mu" and a standard deviation "sd".
+    y = rnorm(m, nu[i], sd)#Initialize "m" data points from a normal distribution with a mean "nu" and a standard deviation "sd".
+    p[b] = t.test(x, y, var.equal=TRUE)[[3]]#Obtain the p-value after doing the t-test
+  }
+  power_c[i] = mean(p<0.05)#Calculate the power function of a particular value of "nu"
+}
+plot(nu, power_c, type="l", col="green")#Plot the power as a function of "nu"
+```
+
+d)  Explain your findings.
+
+```{r}
+plot(nu, power_a, type="l", col="red")#Plot the power obtained from point "a" as a function of "nu"
+points(nu, power_b, type="l", col="blue")#Plot the power obtained from point "b" as a function of "nu"
+points(nu, power_c, type="l", col="green")#Plot the power obtained from point "c" as a function of "nu"
+```
+
+**Exercise 4.** *Energy drink*
+
+To study the effect of energy drink a sample of 24 high school pupils were randomized to drinking either a softdrink or an energy drink after running for 60 meters. After half an hour they were asked to run again. For both sprints they were asked to sprint as fast they could, and the sprinting time was measured. The data is given in the file run.txt. [Courtesy class 5E, Stedelijk Gymnasium Leiden, 2010.]
+
+a)  Disregarding the type of drink, test whether the run times before drink and after are correlated.
+
+```{r}
+data_4 = read.table(file="run.txt", header=TRUE)
+par(mfrow=c(1,2))
+hist(data_4$before)
+hist(data_4$after)
+```
+
+```{r}
+par(mfrow=c(1,2))
+boxplot(data_4$before, data_4$after)
+boxplot(data_4$before - data_4$after)
+```
+
+```{r}
+t.test(data_4$before, data_4$after, paired=TRUE)
+t.test(data_4$before - data_4$after)
+```
+
+b)  Test separately, for both the softdrink and the energy drink conditions, whether there is a difference in speed in the two running tasks.
+
+```{r}
+energy_data_before = data_4$before[data_4[,3] == "energy"]
+energy_data_after = data_4$after[data_4[,3] == "energy"]
+par(mfrow=c(1,2))
+hist(energy_data_before)
+hist(energy_data_after)
+```
+
+```{r}
+par(mfrow=c(1,2))
+boxplot(energy_data_before, energy_data_after)
+boxplot(energy_data_before - energy_data_after)
+```
+
+```{r}
+t.test(energy_data_before, energy_data_after, paired=TRUE)
+t.test(energy_data_before - energy_data_after)
+```
+
+```{r}
+lemo_data_before = data_4$before[data_4[,3] == "lemo"]
+lemo_data_after = data_4$after[data_4[,3] == "lemo"]
+par(mfrow=c(1,2))
+hist(lemo_data_before)
+hist(lemo_data_after)
+```
+
+```{r}
+par(mfrow=c(1,2))
+boxplot(lemo_data_before, lemo_data_after)
+boxplot(lemo_data_before - lemo_data_after)
+```
+
+```{r}
+t.test(lemo_data_before, lemo_data_after, paired=TRUE)
+t.test(lemo_data_before - lemo_data_after)
+```
+
+c)  For each pupil compute the time difference between the two running tasks. Test whether these time differences are effected by the type of drink.
+
+```{r}
+child_time = numeric(length(data_4$before))
+for(i in 1:length(data_4$before)){
+  child_time[i] =  data_4$before[i] - data_4$after[i]
+}
+
+lemo_child_time = child_time[data_4[,3] == "lemo"]
+energy_child_time = child_time[data_4[,3] == "energy"]
+
+par(mfrow=c(1,2))
+hist(lemo_child_time)
+hist(energy_child_time)
+```
+
+```{r}
+par(mfrow=c(1,2))
+boxplot(lemo_child_time, energy_child_time)
+boxplot(lemo_child_time - energy_child_time)
+```
+
+```{r}
+t.test(lemo_child_time, energy_child_time, paired=TRUE)
+t.test(lemo_child_time - energy_child_time)
+```
+
+**Exercise 5.** *Chick weights*
+
+The dataset chickwts is a data frame included in the standard R installation, to view it, type chickwts at the R prompt. This data frame contains 71 observations on newly-hatched chicks which were randomly allocated among six groups. Each group was given a different feed supplement for six weeks, after which their weight (in grams) was measured. The data frame consists of a numeric column giving the weights, and a factor column giving the name of the feed supplement.
+
+a)  Test whether the distributions of the chicken weights for meatmeal and sunflower groups are different by performing three tests: the two samples t-test (argue whether the data are paired or not), the Mann-Whitney test and the Kolmogorov-Smirnov test. Comment on your findings.
+
 ```{r}
 data("chickwts")
 meatmeal = chickwts$weight[chickwts$feed == "meatmeal"]
@@ -48,24 +270,30 @@ boxplot(meatmeal, sunflower, names=c("meatmeal", "sunflower"))
 ```{r}
 t.test(meatmeal, sunflower, paired=FALSE)
 ```
-Since the Welch Two Sample t-test has $p$-value=0.04441 < 0.05, it is the case to reject $H_0$. The conclusion should be there exist certain difference between the meatmeal and sunflower. Additionally, the data are not paired, because if we set "paired=TRUE", we would get an error message- "not all arguments have the same length".
+
+Since the Welch Two Sample t-test has $p$-value=0.04441 \< 0.05, it is the case to reject $H_0$. The conclusion should be there exist certain difference between the meatmeal and sunflower. Additionally, the data are not paired, because if we set "paired=TRUE", we would get an error message- "not all arguments have the same length".
 
 ```{r}
 wilcox.test(meatmeal, sunflower)
 ```
-Mann-Whitney test has a $p$-value = 0.06882 > 0.05, so the conclusion is that there is no such significant difference between two groups.
+
+Mann-Whitney test has a $p$-value = 0.06882 \> 0.05, so the conclusion is that there is no such significant difference between two groups.
 
 ```{r}
 ks.test(meatmeal,sunflower)
 ```
-Kolmogorov-Smirnov test has a $p$-value = 0.1085 < 0.05. From this result we can conclude that the two populations are extremely unsymmetrical in shapes.
 
-## b.
+Kolmogorov-Smirnov test has a $p$-value = 0.1085 \< 0.05. From this result we can conclude that the two populations are extremely unsymmetrical in shapes.
+
+c)  Conduct a one-way ANOVA to determine whether the type of feed supplement has an effect on the weight of the chicks. Give the estimated chick weights for each of the six feed supplements. What is the best feed supplement?
+
 ```{r}
 chickaov=lm(weight ~ feed, data=chickwts)
 anova(chickaov)
 ```
-By conducting the one-way ANOVA, it is easy to see that the $p$-value = 5.936e-10 < 0.05, which tells that there exist at least such a type has an extremely different average weight. 
+
+By conducting the one-way ANOVA, it is easy to see that the $p$-value = 5.936e-10 \< 0.05, which tells that there exist at least such a type has an extremely different average weight.
+
 ```{r}
 library(ggplot2)
 library(ggthemes)
@@ -79,21 +307,28 @@ cdata.wt.feed = cdata %>%
   theme_calc()
 cdata.wt.feed
 ```
+
 The above plot shows that the casein and sunflower are the best feed supplement.
 
-## c.
+c)  Check the ANOVA model assumptions by using relevant diagnostic tools.
+
 ```{r}
 caov = aov(weight~feed, data=chickwts)
 plot(caov)
 ```
-These plots shows that the ANOVA model assumptions is in line with expectations. In the case like this, we can conclude that values have equal variance. 
+
+These plots shows that the ANOVA model assumptions is in line with expectations. In the case like this, we can conclude that values have equal variance.
+
 ```{r}
 summary(caov)
 ```
-Additionally, since the $p$-value < 0.05, it also shows the normality of the values.
 
-## d.
+Additionally, since the $p$-value \< 0.05, it also shows the normality of the values.
+
+d)  Does the Kruskal-Wallis test arrive at the same conclusion about the effect of feed supplement as the test in b)? Explain possible differences between conclusions of the Kruskal-Wallis and ANOVA tests.
+
 ```{r}
 kruskal.test(weight ~ feed, data=chickwts) 
 ```
-Kruskal-Wallis test has a $p$-value = 5.113e-07 < 0.05, which means there exist such a feed influenced the weight. And the one-way ANOVA also shows the same conclusion. On the other hand, Kruskal-Wallis test is based on ranks instead of normality as ANOVA. It means that the ANOVA tested the normality of values from means, but Kruskal-Wallis tested on comparison of the ranks of the means.
+
+Kruskal-Wallis test has a $p$-value = 5.113e-07 \< 0.05, which means there exist such a feed influenced the weight. And the one-way ANOVA also shows the same conclusion. On the other hand, Kruskal-Wallis test is based on ranks instead of normality as ANOVA. It means that the ANOVA tested the normality of values from means, but Kruskal-Wallis tested on comparison of the ranks of the means.
