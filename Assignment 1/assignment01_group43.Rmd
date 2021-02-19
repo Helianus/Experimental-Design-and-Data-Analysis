@@ -163,7 +163,7 @@ points(nu, power_b, type="l", col="blue")#Plot the power obtained from point "b"
 points(nu, power_c, type="l", col="green")#Plot the power obtained from point "c" as a function of "nu"
 ```
 
-**Exercise 4.** *Energy drink*
+## Exercise 4. Energy drink
 
 To study the effect of energy drink a sample of 24 high school pupils were randomized to drinking either a softdrink or an energy drink after running for 60 meters. After half an hour they were asked to run again. For both sprints they were asked to sprint as fast they could, and the sprinting time was measured. The data is given in the file run.txt. [Courtesy class 5E, Stedelijk Gymnasium Leiden, 2010.]
 
@@ -254,17 +254,18 @@ t.test(lemo_child_time, energy_child_time, paired=TRUE)
 t.test(lemo_child_time - energy_child_time)
 ```
 
-**Exercise 5.** *Chick weights*
+## Exercise 5. Chick weights
 
 The dataset chickwts is a data frame included in the standard R installation, to view it, type chickwts at the R prompt. This data frame contains 71 observations on newly-hatched chicks which were randomly allocated among six groups. Each group was given a different feed supplement for six weeks, after which their weight (in grams) was measured. The data frame consists of a numeric column giving the weights, and a factor column giving the name of the feed supplement.
 
-a)  Test whether the distributions of the chicken weights for meatmeal and sunflower groups are different by performing three tests: the two samples t-test (argue whether the data are paired or not), the Mann-Whitney test and the Kolmogorov-Smirnov test. Comment on your findings.
+### a.  
+Test whether the distributions of the chicken weights for meatmeal and sunflower groups are different by performing three tests: the two samples t-test (argue whether the data are paired or not), the Mann-Whitney test and the Kolmogorov-Smirnov test. Comment on your findings.
 
 ```{r}
 data("chickwts")
 meatmeal = chickwts$weight[chickwts$feed == "meatmeal"]
 sunflower = chickwts$weight[chickwts$feed == "sunflower"]
-boxplot(meatmeal, sunflower, names=c("meatmeal", "sunflower"))
+#boxplot(meatmeal, sunflower, names=c("meatmeal", "sunflower"))
 ```
 
 ```{r}
@@ -314,6 +315,8 @@ c)  Check the ANOVA model assumptions by using relevant diagnostic tools.
 
 ```{r}
 caov = aov(weight~feed, data=chickwts)
+opar = par(mfrow = c(2, 2), oma = c(0, 0, 1.1, 0),
+            mar = c(4.1, 4.1, 2.1, 1.1))
 plot(caov)
 ```
 
