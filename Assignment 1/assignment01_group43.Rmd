@@ -1,6 +1,6 @@
 ---
 title: "Assignment 1"
-author: "Andrei Udriste, Xinyu Hu, Maria Gheorghe-Tudor - Group 43"
+author: "Andrei Udriste, Xinyu Hu, Maria Gherghina-Tudor - Group 43"
 date: "2021/2/19"
 output:
   pdf_document: default
