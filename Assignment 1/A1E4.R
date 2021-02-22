@@ -43,3 +43,14 @@ t.test(lemo_data_before, lemo_data_after, paired=TRUE)
 t.test(lemo_data_before - lemo_data_after)
 par(mfrow=c(1,1))
 qqnorm(lemo_data_before - lemo_data_after)
+
+#c
+child_time = numeric(length(data_4$before))
+for(i in 1:length(data_4$before)){
+  child_time[i] =  data_4$before[i] - data_4$after[i]
+}
+
+lemo_child_time = child_time[data_4[,3] == "lemo"]
+energy_child_time = child_time[data_4[,3] == "energy"]
+
+hist()
