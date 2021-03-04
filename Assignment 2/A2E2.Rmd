@@ -1,0 +1,55 @@
+---
+title: "A2E2"
+author: "Xinyu Hu"
+date: "2021/3/4"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# a.
+I=3;B=5;N=1
+for(i in 1:B) print(sample(1:(N*I)))
+```
+
+```{r}
+# b.
+search_data = read.delim("search.txt", header=T, sep="")
+par(mfrow=c(2,2))
+boxplot(time~skill, main="effect of skill", data=search_data)
+boxplot(time~interface, main="effect of interface", data=search_data)
+interaction.plot(skill, interface, time, col = c('red', 'blue', 'green'), main = "Skill vs. interface", data=search_data)
+interaction.plot(interface, skill, time, col = c('red', 'blue', 'yellow', 'green', 'black'), main = "Interface vs. skill", data=search_data)
+```
+
+```{r}
+search_aov = lm(time~interface+skill, data=search_data)
+anova(search_aov)
+```
+```{r}
+summary(search_aov)
+```
+
+```{r}
+# c.
+par(mfrow=c(1,2));qqnorm(residuals(search_aov), main="QQ-plot of Residuals");plot(fitted(search_aov),residuals(search_aov), main="Residuals vs. Fitted")
+```
+
+```{r}
+shapiro.test(residuals(search_aov))
+```
+
+```{r}
+# d.
+friedman.test(time, interface, skill, data=search_data)
+```
+
+```{r}
+# e.
+search_one_aov = lm(time~interface, data=search_data)
+print(anova(search_one_aov), signif.stars=F)
+```
+
