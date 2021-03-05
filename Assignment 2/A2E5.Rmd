@@ -1,0 +1,117 @@
+---
+title: "A2E5"
+author: "Xinyu Hu"
+date: "2021/3/5"
+fontsize: 10pt
+output:
+    pdf_document: default
+    html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Exercise 5
+**a)** \newline
+```{r, echo=FALSE, compress = T, fig.width = 6, fig.height = 3.5}
+ex = read.table(file="expensescrime.txt", header=T)
+attach(ex);par(mfrow=c(2,3))
+hist(expend); hist(bad); hist(crime)
+hist(lawyers); hist(employ); hist(pop)
+```
+\newline In case of finding the potential and influence points, the histograms are shown above. It is clear that the crime factor is normally distributed, and the rest of factors have the similar curve. It shows that there exists collinearity.
+\newline
+```{r,echo=FALSE,compress = T, fig.width = 6, fig.height = 3.5}
+plot(ex[,c(2:7)]);round(cor(ex[2:7]),2)
+```
+In the graph, (expend, crime), (bad, crime), (crime, lawyers), (crime, employ), (crime, pop) are not linear independently. And we need to see which predictor variables are involved in collinearity.
+
+```{r, echo=FALSE,include = FALSE}
+library(car)
+```
+```{r}
+exlm1 = lm(expend~bad+crime+lawyers+employ+pop, data=ex);vif(exlm1)
+exlm2 = lm(expend~crime+lawyers+employ+pop, data=ex); vif(exlm2)
+exlm3 = lm(expend~crime+employ+pop, data=ex); vif(exlm3)
+exlm4 = lm(expend~crime+pop, data=ex); vif(exlm4)
+```
+```{r, eval=FALSE}
+exlm5 = lm(expend~crime, data=ex);vif(exlm5)
+# Error in vif.default(exlm5) : model contains fewer than 2 terms
+```
+
+In exlm1, exlm2 and exlm3, all VIF's are large, so there is a collinearity problem, but the exlm4 and exlm5 are OK.
+```{r, compress = T, fig.width = 6, fig.height = 3.5}
+plot(cooks.distance(exlm1),type="b")
+round(cooks.distance(exlm1),2)
+```
+Thus, the potential and influence points are Point(5), Point(8), Point(35) and Point(44).
+
+**b)** \newline
+First, we start with step-up method.
+```{r}
+summary(lm(expend~bad,data=ex))[[8]]
+summary(lm(expend~crime,data=ex))[[8]]
+summary(lm(expend~lawyers,data=ex))[[8]]
+summary(lm(expend~employ,data=ex))[[8]]
+summary(lm(expend~pop,data=ex))[[8]]
+```
+The employ has highest value: 0.9539745.
+```{r}
+summary(lm(expend~employ+bad,data=ex))[[8]]
+summary(lm(expend~employ+crime,data=ex))[[8]]
+summary(lm(expend~employ+pop,data=ex))[[8]]
+summary(lm(expend~employ+lawyers,data=ex))[[8]]
+```
+The model of expend~employ+lawyers has highest value: 0.9631745.
+```{r}
+summary(lm(expend~employ+lawyers+bad,data=ex))[[8]]
+summary(lm(expend~employ+lawyers+crime,data=ex))[[8]]
+summary(lm(expend~employ+lawyers+pop,data=ex))[[8]]
+```
+Since the models did not yield any significant results, the step-up method stopped.
+```{r}
+summary(lm(expend~bad+crime+lawyers+employ+pop,data=ex))[[8]]
+summary(lm(expend~bad+lawyers+employ+pop,data=ex))[[8]]
+summary(lm(expend~bad+lawyers+employ,data=ex))[[8]]
+summary(lm(expend~lawyers+employ,data=ex))[[8]]
+```
+All of these models did not yield any significant results, so the step-down method stopped. Hence, expend~lawyers+employ is the final model for both methods, which $expend = -110.7+0.002971\times employ + 0.02686\times lawyers$. 
+
+**c)** \newline
+```{r, echo=FALSE, compress = T, fig.width = 6, fig.height = 3.5}
+exlm=lm(expend~employ+lawyers,data=ex)
+par(mfrow=c(2,3))
+plot(residuals(exlm),employ,xlab="Residuals",main="Residuals vs. Employ")
+plot(residuals(exlm),lawyers,xlab="Residuals",main="Residuals vs. Lawyers")
+plot(residuals(exlm),bad,xlab="Residuals",main="Residuals vs. Bad")
+plot(residuals(exlm),crime,xlab="Residuals",main="Residuals vs. Crime")
+plot(residuals(exlm),pop,xlab="Residuals",main="Residuals vs. Pop")
+qqnorm(residuals(exlm))
+```
+
+From question(a), it already shows the collinearity of dependent and independent variables. The above graphs claims that the spread of residuals against variables did not show such a pattern existing. And the QQ-plot shows the residuals are normally distributed.
+
+```{r, echo=FALSE, compress = T, fig.width = 6, fig.height = 3.5}
+x1=residuals(lm(lawyers~crime+employ+pop+bad))
+y1=residuals(lm(expend~bad+crime+employ+pop))
+x2=residuals(lm(employ~lawyers+crime+pop+bad)) 
+y2=residuals(lm(expend~bad+lawyers+crime+pop)) 
+par(mfrow=c(1,2))
+plot(x1,y1,main="Added variable plot for lawyers", xlab="Residual of lawyers", ylab="Residual of expend", cex=0.7)
+plot(x2,y2,main="Added variable plot for employ", xlab="Residual of employ", ylab="Residual of expend", cex=0.7)
+```
+
+The added variable plots also show that there is no such specific curved pattern visible.
+
+```{r}
+shapiro.test(residuals(exlm))
+```
+
+The Shapiro-Wilk normality test shows the same as the QQ-plot, which means it is still normally distributed since $p$-value=1.118e-05 < 0.05.
+
+```{r, echo=FALSE, compress = T, fig.width = 6, fig.height = 3.5}
+plot(residuals(exlm),fitted(exlm))
+```
+\newline Moreover, there is no patterns or errors are visible in the scatter plot of residuals against $Y$ (and $\hat{Y}$ ).
