@@ -2,9 +2,10 @@
 title: "Assignment 2"
 author: "Andrei Udriste, Xinyu Hu, Maria Gherghina-Tudor - Group 43"
 date: "2021/3/7"
-fontsize: 10pt
 output:
   pdf_document: default
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -12,6 +13,93 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ### **Exercise 1.** *Moldy bread*
+
+```{r}
+#install.packages("car")
+#library("car")
+bread = read.table(file="bread.txt", header=TRUE, sep=" ")
+attach(bread)
+```
+
+#### **a)**
+
+```{r}
+env=3; hum=2; N=3
+rbind(rep(1:environment,each=N*humidity),rep(1:humidity,N*environment),sample(1:(N*environment*humidity)))
+```
+
+Interpreting the table resulting from the randomization process:
+
+-   each column can be seen as a different unit (where the ID of the unit is the value in the third row)
+
+-   the first row can be seen as the environment that each unit has to be measured in
+
+-   the second row can be seen as the humidity group of the unit.
+
+#### **b)**
+
+```{r}
+par(mfrow=c(1,2))
+boxplot(hours~environment, main = "Effect of environment")
+boxplot(hours~humidity, main = "Effect of humidity")
+```
+
+```{r}
+par(mfrow=c(1,2))
+interaction.plot(environment,humidity,hours, main="Environment vs. Humidity")
+interaction.plot(humidity,environment,hours, main="Humidity vs. Environment")
+```
+
+```{r}
+aovhoursenv=lm(hours~environment*humidity)
+anova_hours = anova(aovhoursenv)
+anova_hours
+summary(anova_hours)
+```
+
+When performing a one way ANOVA test to analysis the effect of the factors on the decay and their interaction, it can be concluded that both factors have a significant effect on the time of the decay: $F$=131.9, $p$-value: 4.676e-10
+
+```{r}
+par(mfrow=c(1,2))
+qqnorm(residuals(aovhoursenv))
+plot(fitted(aovhoursenv),residuals(aovhoursenv), main='Interaction plot')
+```
+
+When analysing the graphical representation the interaction (the interaction plot), the interaction of Humidity vs. Environment shows a clear effect: it can be concluded that for both intermediate and warm environments, the mean of the hours of decay is decreasing when humidity is increasing (from a dry to a wet environment). For the cold environment, humidity has an opposite effect - an increase in the duration of the time to decay once humidity increases (from a dry to a wet environment). Furthermore, the spread in the residuals seems to be bigger for middle-fitted values, while a few data points seem extreme, requiring further outliers investigation.
+
+#### **d)**
+
+```{r}
+duration=as.vector(as.matrix(bread[1:18,]))
+id=as.factor(rep(1:18,4))
+environment=as.factor(rep(1:3,each=6))
+humidity=as.factor(rep(1:2,each=3))
+breaddata=data.frame(cbind(duration,id,environment,humidity))
+breaddata[1:18,]
+```
+
+```{r}
+boxplot(duration~humidity, xlab="humidity", ylab="duration")
+interaction.plot()
+```
+
+```{r}
+friedman.test(duration,environment,id,data=breaddata)
+```
+
+#### **e)**
+
+```{r}
+par(mfrow=c(1,2))
+qqnorm(residuals(aovhoursenv),main = "QQ-plot residuals"); 
+plot(fitted(aovhoursenv),residuals(aovhoursenv), main = "Residuals against fitted values")
+```
+
+```{r}
+shapiro.test(residuals(aovhoursenv))
+```
+
+Shapiro-Wilk normality test results lead to a $p$-value = 0.1911, which means the normality assumption is not rejected: there is no reason to suspect that the differences are not resulting from a normal distribution.
 
 ### **Exercise 2.** Search engine
 
@@ -60,9 +148,13 @@ par(mfrow=c(1,2));qqnorm(residuals(search_aov), main="QQ-plot of Residuals");plo
 
 The two graphs look ok. The QQ-plot look almost normal, the only problem that would make us doubt the normality of the data is the bump present in the upper region, but is not that significant. The fitted plot looks great, the fitted value have a good spread and there doesn't seem to be any pattern.
 
+Another method to check normality would be to use Shapiro-Wilk normality test.
+
 ```{r}
 shapiro.test(residuals(search_aov))
 ```
+
+After running the test we obtain a $p$-value = 0.2817, thins means that we do not reject the null hypothesis H0 so the distribution of the data could be normal.
 
 #### d)
 
@@ -116,6 +208,55 @@ t.test(milk[treatment=="A"], milk[treatment=="B"],paired=TRUE)
 The last way we can try to test the difference between the two treatments is to perform a $t$-test on the two milk samples after using each treatment. After computing the $t$-test we obtain a $p$-value of 0.8281 this means that we accept the null hypothesis H0, so there is no significant difference between the two treatments. This means that all three test obtain the same conclusion, that the null hypothesis is accepted, but in the case of the $t$-test the $p$-value was considerably bigger than in the case of the other tests. But there is a clear problem with using the $t$-test in this case, mainly that we only look at the treatment factor and we discard any other factor that might influence the final result.
 
 ### **Exercise 4.** Jane Austen
+
+```{r}
+austen=read.table("austen.txt",header=TRUE)
+austendata=data.frame(austen$word, austen$Sense, austen$Emma, austen$Sand1)
+attach(austendata)
+```
+
+#### a)
+
+For a statistical analysis of the word frequencies in relation to Jane Austen's novel Sanditon, the amount of specific words used in her previous works is compared to the ones used by the admirer who tried to replicate her style. For such comparison, it is needed to determine if the frequency counts for specific words are equally distributed for both writers. Therefore, a contingency table test for homogenity is the most suitable.
+
+#### b)
+
+To analyse Austen's consistency throughout her different novels, a Chi-squared test can be used. This is performed on the columns containing data based on her writings (Sense, Emma, Sand1):
+
+```{r}
+consistency=chisq.test(austendata)
+```
+
+Pearson's Chi-squared test: $X$-squared = 12.271, $df$ = 10, $p$-value = 0.2673
+
+Since the p-value is high (0.26), the null hypothesis is to be rejected, therefore confirming a relationship between the variables. As expected, it can be concluded that there is a consistency throughout Austen's novels.
+
+The main inconsistencies can be found by investigating the residuals:
+
+```{r}
+residuals(consistency)
+```
+
+#### c)
+
+```{r}
+admirer=chisq.test(austen)
+admirer
+```
+
+Pearson's Chi-squared test: $X$-squared = 45.578, $df$= 15, $p$-value = 6.205e-05. Since the p-value is very high (6.205e-05), it can be concluded that the null hypothesis is rejected, thus confirming a similarity between the writers' style. The main differences between the writers can be found once again by inspecting the residuals:
+
+```{r}
+residuals(chisq.test(austen))
+```
+
+The main differences are found for the count of the following words:
+
+-   "an" and "with" - both words have been used significantly more by the admirer, compared to Austen
+
+-   "that" - has been used significantly less by the admirer, compared to Austen
+
+Therefore, it can be concluded that the admirer was quite successful in imitating Austen's writing style, with small differences for a few words.
 
 ### **Exercise 5.** Expenditure on criminal activities
 
