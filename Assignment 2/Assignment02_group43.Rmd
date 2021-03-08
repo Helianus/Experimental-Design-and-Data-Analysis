@@ -25,7 +25,7 @@ attach(bread)
 
 ```{r}
 env=3; hum=2; N=3
-rbind(rep(1:environment,each=N*humidity),rep(1:humidity,N*environment),sample(1:(N*environment*humidity)))
+rbind(rep(1:env,each=N*hum),rep(1:hum,N*env),sample(1:(N*env*hum)))
 ```
 
 Interpreting the table resulting from the randomization process:
