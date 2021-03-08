@@ -2,10 +2,9 @@
 title: "Assignment 2"
 author: "Andrei Udriste, Xinyu Hu, Maria Gherghina-Tudor - Group 43"
 date: "2021/3/7"
+fontsize: 10pt
 output:
   pdf_document: default
-  html_document:
-    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -27,7 +26,7 @@ To create a randomized block design we can use the function sample from R, which
 
 #### **b)**
 
-```{r}
+```{r,echo=FALSE,compress = T, fig.width = 6, fig.height = 3.5}
 search_data = read.delim("search.txt", header=T, sep="")
 par(mfrow=c(2,2))
 boxplot(time~skill, main="effect of skill", data=search_data)
@@ -55,7 +54,7 @@ The interface that has the highest individual and mean search time is number 3.
 
 #### **c)**
 
-```{r}
+```{r,echo=FALSE,compress = T, fig.width = 6, fig.height = 3.5}
 par(mfrow=c(1,2));qqnorm(residuals(search_aov), main="QQ-plot of Residuals");plot(fitted(search_aov),residuals(search_aov), main="Residuals vs. Fitted")
 ```
 
@@ -82,7 +81,7 @@ print(anova(search_one_aov), signif.stars=F)
 
 #### a)
 
-```{r fig.width = 6, fig.height = 3.5}
+```{r,echo=FALSE,compress = T, fig.width = 6, fig.height = 3.5}
 cow = read.table('cow.txt', header=T); cow$id= factor(cow$id); cow$per = factor(cow$per)
 boxplot(cow$milk[cow$treatment == "A"], cow$milk[cow$treatment == "B"])
 ```

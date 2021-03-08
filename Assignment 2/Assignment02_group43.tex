@@ -1,0 +1,758 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+  10pt,
+]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Assignment 2},
+  pdfauthor={Andrei Udriste, Xinyu Hu, Maria Gherghina-Tudor - Group 43},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifluatex
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+
+\title{Assignment 2}
+\author{Andrei Udriste, Xinyu Hu, Maria Gherghina-Tudor - Group 43}
+\date{2021/3/7}
+
+\begin{document}
+\maketitle
+
+\hypertarget{exercise-1.-moldy-bread}{%
+\subsubsection{\texorpdfstring{\textbf{Exercise 1.} \emph{Moldy
+bread}}{Exercise 1. Moldy bread}}\label{exercise-1.-moldy-bread}}
+
+\hypertarget{exercise-2.-search-engine}{%
+\subsubsection{\texorpdfstring{\textbf{Exercise 2.} Search
+engine}{Exercise 2. Search engine}}\label{exercise-2.-search-engine}}
+
+\hypertarget{a}{%
+\paragraph{\texorpdfstring{\textbf{a)}}{a)}}\label{a}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{I}\OtherTok{=}\DecValTok{3}\NormalTok{;B}\OtherTok{=}\DecValTok{5}\NormalTok{;N}\OtherTok{=}\DecValTok{1}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{B) }\FunctionTok{print}\NormalTok{(}\FunctionTok{sample}\NormalTok{(}\DecValTok{1}\SpecialCharTok{:}\NormalTok{(N}\SpecialCharTok{*}\NormalTok{I)))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 3 1 2
+## [1] 2 3 1
+## [1] 2 3 1
+## [1] 2 1 3
+## [1] 1 3 2
+\end{verbatim}
+
+To create a randomized block design we can use the function sample from
+R, which selects a random variable from a given dataset. I represents
+the number of interfaces, 3. B represents the number of levels of
+computational skills, 5.
+
+\hypertarget{b}{%
+\paragraph{\texorpdfstring{\textbf{b)}}{b)}}\label{b}}
+
+\begin{verbatim}
+## Warning in plot.window(...): "data" is not a graphical parameter
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in plot.xy(xy, type, ...): "data" is not a graphical parameter
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in axis(side = side, at = at, labels = labels, ...): "data" is not a
+## graphical parameter
+
+## Warning in axis(side = side, at = at, labels = labels, ...): "data" is not a
+## graphical parameter
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in box(...): "data" is not a graphical parameter
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in title(...): "data" is not a graphical parameter
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in axis(1, x, ...): "data" is not a graphical parameter
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in plot.window(...): "data" is not a graphical parameter
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in plot.xy(xy, type, ...): "data" is not a graphical parameter
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in axis(side = side, at = at, labels = labels, ...): "data" is not a
+## graphical parameter
+
+## Warning in axis(side = side, at = at, labels = labels, ...): "data" is not a
+## graphical parameter
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in box(...): "data" is not a graphical parameter
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in title(...): "data" is not a graphical parameter
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in axis(1, x, ...): "data" is not a graphical parameter
+\end{verbatim}
+
+\includegraphics{Assignment02_group43_files/figure-latex/unnamed-chunk-2-1.pdf}
+
+The first step in analyzing the provided data is to create box plots for
+the skill level of the users and the used interfaces and see what are
+the differences in those boxplots. If we observe the box plots we can
+observe that the skill level impacts the search time for the users. The
+same can be said about the interfaces, where the first interfaces
+provides a lower search time than the other two interfaces.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{factor\_skills }\OtherTok{=} \FunctionTok{factor}\NormalTok{(search\_data}\SpecialCharTok{$}\NormalTok{skill)}
+\NormalTok{factor\_interface }\OtherTok{=} \FunctionTok{factor}\NormalTok{(search\_data}\SpecialCharTok{$}\NormalTok{interface)}
+\NormalTok{search\_aov }\OtherTok{=} \FunctionTok{lm}\NormalTok{(time}\SpecialCharTok{\textasciitilde{}}\NormalTok{factor\_interface }\SpecialCharTok{+}\NormalTok{ factor\_skills, }\AttributeTok{data=}\NormalTok{search\_data)}
+\FunctionTok{anova}\NormalTok{(search\_aov)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Analysis of Variance Table
+## 
+## Response: time
+##                  Df Sum Sq Mean Sq F value  Pr(>F)  
+## factor_interface  2 50.465 25.2327  7.8237 0.01310 *
+## factor_skills     4 80.051 20.0127  6.2052 0.01421 *
+## Residuals         8 25.801  3.2252                  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+After performing the ANOVA test the \(p\)-value 0.0142 was obtained,
+this means that the null hypotheses is rejected, so the search time is
+different for particular interfaces.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Interface with the highest time ="}\NormalTok{, search\_data}\SpecialCharTok{$}\NormalTok{interface[search\_data}\SpecialCharTok{$}\NormalTok{time }\SpecialCharTok{==} \FunctionTok{max}\NormalTok{(search\_data}\SpecialCharTok{$}\NormalTok{time)])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Interface with the highest time = 3
+\end{verbatim}
+
+The interface that has the highest individual and mean search time is
+number 3.
+
+\hypertarget{c}{%
+\paragraph{\texorpdfstring{\textbf{c)}}{c)}}\label{c}}
+
+\includegraphics{Assignment02_group43_files/figure-latex/unnamed-chunk-5-1.pdf}
+
+The two graphs look ok. The QQ-plot look almost normal, the only problem
+that would make us doubt the normality of the data is the bump present
+in the upper region, but is not that significant. The fitted plot looks
+great, the fitted value have a good spread and there doesn't seem to be
+any pattern.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{shapiro.test}\NormalTok{(}\FunctionTok{residuals}\NormalTok{(search\_aov))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  residuals(search_aov)
+## W = 0.93092, p-value = 0.2817
+\end{verbatim}
+
+\hypertarget{d}{%
+\paragraph{d)}\label{d}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{friedman.test}\NormalTok{(search\_data}\SpecialCharTok{$}\NormalTok{time, search\_data}\SpecialCharTok{$}\NormalTok{interface, search\_data}\SpecialCharTok{$}\NormalTok{skill, }\AttributeTok{data=}\NormalTok{search\_data)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Friedman rank sum test
+## 
+## data:  search_data$time, search_data$interface and search_data$skill
+## Friedman chi-squared = 6.4, df = 2, p-value = 0.04076
+\end{verbatim}
+
+\hypertarget{e}{%
+\paragraph{e)}\label{e}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{search\_one\_aov }\OtherTok{=} \FunctionTok{lm}\NormalTok{(time}\SpecialCharTok{\textasciitilde{}}\NormalTok{interface, }\AttributeTok{data=}\NormalTok{search\_data)}
+\FunctionTok{print}\NormalTok{(}\FunctionTok{anova}\NormalTok{(search\_one\_aov), }\AttributeTok{signif.stars=}\NormalTok{F)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Analysis of Variance Table
+## 
+## Response: time
+##           Df  Sum Sq Mean Sq F value  Pr(>F)
+## interface  1  49.729  49.729  6.0652 0.02852
+## Residuals 13 106.588   8.199
+\end{verbatim}
+
+\hypertarget{exercise-3.-feedingstuffs-for-cows}{%
+\subsubsection{\texorpdfstring{\textbf{Exercise 3.} Feedingstuffs for
+cows}{Exercise 3. Feedingstuffs for cows}}\label{exercise-3.-feedingstuffs-for-cows}}
+
+\hypertarget{a-1}{%
+\paragraph{a)}\label{a-1}}
+
+\includegraphics{Assignment02_group43_files/figure-latex/unnamed-chunk-9-1.pdf}
+
+In the boxplot above we can observe the two milk quantities obtained
+after using each treatment. It can be observed that there is almost no
+difference between the two milk quantities.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{cowlm }\OtherTok{=} \FunctionTok{lm}\NormalTok{(milk }\SpecialCharTok{\textasciitilde{}}\NormalTok{ id }\SpecialCharTok{+}\NormalTok{ per }\SpecialCharTok{+}\NormalTok{ treatment, }\AttributeTok{data =}\NormalTok{ cow)}
+\FunctionTok{anova}\NormalTok{(cowlm)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Analysis of Variance Table
+## 
+## Response: milk
+##           Df  Sum Sq Mean Sq  F value    Pr(>F)    
+## id         8 2467.47 308.434 124.4832 7.494e-07 ***
+## per        1   24.50  24.500   9.8881   0.01628 *  
+## treatment  1    1.16   1.156   0.4666   0.51654    
+## Residuals  7   17.34   2.478                       
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+To draw a better conclusion between the two treatments we can use the
+ANOVA test, which will give us a \(p\)-value of 0.51654. This means that
+we will accept the null hypothesis H0, so there is no difference between
+the two treatments.
+
+\hypertarget{b-1}{%
+\paragraph{b)}\label{b-1}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(lme4)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Loading required package: Matrix
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{cowlmer }\OtherTok{=} \FunctionTok{lmer}\NormalTok{(milk }\SpecialCharTok{\textasciitilde{}}\NormalTok{ per }\SpecialCharTok{+}\NormalTok{ treatment }\SpecialCharTok{+}\NormalTok{ (}\DecValTok{1}\SpecialCharTok{|}\NormalTok{id), }\AttributeTok{data =}\NormalTok{ cow, }\AttributeTok{REML =} \ConstantTok{FALSE}\NormalTok{)}
+\NormalTok{cowlmer1 }\OtherTok{=} \FunctionTok{lmer}\NormalTok{(milk }\SpecialCharTok{\textasciitilde{}}\NormalTok{ per }\SpecialCharTok{+}\NormalTok{ (}\DecValTok{1}\SpecialCharTok{|}\NormalTok{id), }\AttributeTok{data =}\NormalTok{ cow, }\AttributeTok{REML =} \ConstantTok{FALSE}\NormalTok{)}
+\FunctionTok{anova}\NormalTok{(cowlmer1, cowlmer)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Data: cow
+## Models:
+## cowlmer1: milk ~ per + (1 | id)
+## cowlmer: milk ~ per + treatment + (1 | id)
+##          npar    AIC    BIC  logLik deviance  Chisq Df Pr(>Chisq)
+## cowlmer1    4 116.09 119.65 -54.045   108.09                     
+## cowlmer     5 117.51 121.96 -53.755   107.51 0.5807  1      0.446
+\end{verbatim}
+
+Another way to test the difference between the two treatments is to
+create two models, one with the treatment and one without the treatment
+and observe the difference between those two treatments. After computing
+the difference between the two models we obtain a \(p\)-value of 0.446,
+this means that we accept the null hypothesis H0, so there is no
+significant difference between the two treatments so we can conclude
+that the treatment doesn't have a big influence over the model.
+
+\hypertarget{c-1}{%
+\paragraph{c)}\label{c-1}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{attach}\NormalTok{(cow)}
+\FunctionTok{t.test}\NormalTok{(milk[treatment}\SpecialCharTok{==}\StringTok{"A"}\NormalTok{], milk[treatment}\SpecialCharTok{==}\StringTok{"B"}\NormalTok{],}\AttributeTok{paired=}\ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Paired t-test
+## 
+## data:  milk[treatment == "A"] and milk[treatment == "B"]
+## t = 0.22437, df = 8, p-value = 0.8281
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -2.267910  2.756799
+## sample estimates:
+## mean of the differences 
+##               0.2444444
+\end{verbatim}
+
+The last way we can try to test the difference between the two
+treatments is to perform a \(t\)-test on the two milk samples after
+using each treatment. After computing the \(t\)-test we obtain a
+\(p\)-value of 0.8281 this means that we accept the null hypothesis H0,
+so there is no significant difference between the two treatments. This
+means that all three test obtain the same conclusion, that the null
+hypothesis is accepted, but in the case of the \(t\)-test the
+\(p\)-value was considerably bigger than in the case of the other tests.
+But there is a clear problem with using the \(t\)-test in this case,
+mainly that we only look at the treatment factor and we discard any
+other factor that might influence the final result.
+
+\hypertarget{exercise-4.-jane-austen}{%
+\subsubsection{\texorpdfstring{\textbf{Exercise 4.} Jane
+Austen}{Exercise 4. Jane Austen}}\label{exercise-4.-jane-austen}}
+
+\hypertarget{exercise-5.-expenditure-on-criminal-activities}{%
+\subsubsection{\texorpdfstring{\textbf{Exercise 5.} Expenditure on
+criminal
+activities}{Exercise 5. Expenditure on criminal activities}}\label{exercise-5.-expenditure-on-criminal-activities}}
+
+\hypertarget{a-2}{%
+\paragraph{a)}\label{a-2}}
+
+\includegraphics{Assignment02_group43_files/figure-latex/unnamed-chunk-13-1.pdf}
+
+\newline In case of finding the potential and influence points, the
+histograms are shown above. It is clear that the crime factor is
+normally distributed, and the rest of factors have the similar curve. It
+shows that there exists collinearity. \newline
+
+\includegraphics{Assignment02_group43_files/figure-latex/unnamed-chunk-14-1.pdf}
+
+\begin{verbatim}
+##         expend  bad crime lawyers employ  pop
+## expend    1.00 0.83  0.33    0.97   0.98 0.95
+## bad       0.83 1.00  0.37    0.83   0.87 0.92
+## crime     0.33 0.37  1.00    0.38   0.31 0.28
+## lawyers   0.97 0.83  0.38    1.00   0.97 0.93
+## employ    0.98 0.87  0.31    0.97   1.00 0.97
+## pop       0.95 0.92  0.28    0.93   0.97 1.00
+\end{verbatim}
+
+In the graph, (expend, crime), (bad, crime), (crime, lawyers), (crime,
+employ), (crime, pop) are not linear independently. And we need to see
+which predictor variables are involved in collinearity.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{exlm1 }\OtherTok{=} \FunctionTok{lm}\NormalTok{(expend}\SpecialCharTok{\textasciitilde{}}\NormalTok{bad}\SpecialCharTok{+}\NormalTok{crime}\SpecialCharTok{+}\NormalTok{lawyers}\SpecialCharTok{+}\NormalTok{employ}\SpecialCharTok{+}\NormalTok{pop, }\AttributeTok{data=}\NormalTok{ex);}\FunctionTok{vif}\NormalTok{(exlm1)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##       bad     crime   lawyers    employ       pop 
+##  8.364321  1.487978 16.967470 33.591361 32.937517
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{exlm2 }\OtherTok{=} \FunctionTok{lm}\NormalTok{(expend}\SpecialCharTok{\textasciitilde{}}\NormalTok{crime}\SpecialCharTok{+}\NormalTok{lawyers}\SpecialCharTok{+}\NormalTok{employ}\SpecialCharTok{+}\NormalTok{pop, }\AttributeTok{data=}\NormalTok{ex); }\FunctionTok{vif}\NormalTok{(exlm2)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##     crime   lawyers    employ       pop 
+##  1.233263 16.372292 33.106158 17.576977
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{exlm3 }\OtherTok{=} \FunctionTok{lm}\NormalTok{(expend}\SpecialCharTok{\textasciitilde{}}\NormalTok{crime}\SpecialCharTok{+}\NormalTok{employ}\SpecialCharTok{+}\NormalTok{pop, }\AttributeTok{data=}\NormalTok{ex); }\FunctionTok{vif}\NormalTok{(exlm3)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##     crime    employ       pop 
+##  1.121163 17.967808 17.568906
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{exlm4 }\OtherTok{=} \FunctionTok{lm}\NormalTok{(expend}\SpecialCharTok{\textasciitilde{}}\NormalTok{crime}\SpecialCharTok{+}\NormalTok{pop, }\AttributeTok{data=}\NormalTok{ex); }\FunctionTok{vif}\NormalTok{(exlm4)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   crime     pop 
+## 1.08213 1.08213
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{exlm5 }\OtherTok{=} \FunctionTok{lm}\NormalTok{(expend}\SpecialCharTok{\textasciitilde{}}\NormalTok{crime, }\AttributeTok{data=}\NormalTok{ex);}\FunctionTok{vif}\NormalTok{(exlm5)}
+\CommentTok{\# Error in vif.default(exlm5) : model contains fewer than 2 terms}
+\end{Highlighting}
+\end{Shaded}
+
+In exlm1, exlm2 and exlm3, all VIF's are large, so there is a
+collinearity problem, but the exlm4 and exlm5 are OK.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(}\FunctionTok{cooks.distance}\NormalTok{(exlm1),}\AttributeTok{type=}\StringTok{"b"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Assignment02_group43_files/figure-latex/unnamed-chunk-18-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{round}\NormalTok{(}\FunctionTok{cooks.distance}\NormalTok{(exlm1),}\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16 
+## 0.02 0.00 0.00 0.01 4.91 0.00 0.00 3.51 0.00 0.02 0.00 0.00 0.00 0.00 0.14 0.01 
+##   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31   32 
+## 0.00 0.00 0.00 0.03 0.01 0.00 0.01 0.00 0.00 0.00 0.00 0.00 0.01 0.00 0.00 0.14 
+##   33   34   35   36   37   38   39   40   41   42   43   44   45   46   47   48 
+## 0.00 0.00 1.09 0.07 0.00 0.00 0.11 0.00 0.00 0.01 0.00 2.70 0.00 0.00 0.00 0.00 
+##   49   50   51 
+## 0.00 0.00 0.00
+\end{verbatim}
+
+Thus, the potential and influence points are Point(5), Point(8),
+Point(35) and Point(44).
+
+\hypertarget{b-2}{%
+\paragraph{b)}\label{b-2}}
+
+\newline First, we start with step-up method.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(}\FunctionTok{lm}\NormalTok{(expend}\SpecialCharTok{\textasciitilde{}}\NormalTok{bad,}\AttributeTok{data=}\NormalTok{ex))[[}\DecValTok{8}\NormalTok{]]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.6963839
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(}\FunctionTok{lm}\NormalTok{(expend}\SpecialCharTok{\textasciitilde{}}\NormalTok{crime,}\AttributeTok{data=}\NormalTok{ex))[[}\DecValTok{8}\NormalTok{]]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.1118564
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(}\FunctionTok{lm}\NormalTok{(expend}\SpecialCharTok{\textasciitilde{}}\NormalTok{lawyers,}\AttributeTok{data=}\NormalTok{ex))[[}\DecValTok{8}\NormalTok{]]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.9372789
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(}\FunctionTok{lm}\NormalTok{(expend}\SpecialCharTok{\textasciitilde{}}\NormalTok{employ,}\AttributeTok{data=}\NormalTok{ex))[[}\DecValTok{8}\NormalTok{]]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.9539745
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(}\FunctionTok{lm}\NormalTok{(expend}\SpecialCharTok{\textasciitilde{}}\NormalTok{pop,}\AttributeTok{data=}\NormalTok{ex))[[}\DecValTok{8}\NormalTok{]]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.9073261
+\end{verbatim}
+
+The employ has highest value: 0.9539745.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(}\FunctionTok{lm}\NormalTok{(expend}\SpecialCharTok{\textasciitilde{}}\NormalTok{employ}\SpecialCharTok{+}\NormalTok{bad,}\AttributeTok{data=}\NormalTok{ex))[[}\DecValTok{8}\NormalTok{]]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.955097
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(}\FunctionTok{lm}\NormalTok{(expend}\SpecialCharTok{\textasciitilde{}}\NormalTok{employ}\SpecialCharTok{+}\NormalTok{crime,}\AttributeTok{data=}\NormalTok{ex))[[}\DecValTok{8}\NormalTok{]]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.9550501
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(}\FunctionTok{lm}\NormalTok{(expend}\SpecialCharTok{\textasciitilde{}}\NormalTok{employ}\SpecialCharTok{+}\NormalTok{pop,}\AttributeTok{data=}\NormalTok{ex))[[}\DecValTok{8}\NormalTok{]]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.95431
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(}\FunctionTok{lm}\NormalTok{(expend}\SpecialCharTok{\textasciitilde{}}\NormalTok{employ}\SpecialCharTok{+}\NormalTok{lawyers,}\AttributeTok{data=}\NormalTok{ex))[[}\DecValTok{8}\NormalTok{]]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.9631745
+\end{verbatim}
+
+The model of expend\textasciitilde employ+lawyers has highest value:
+0.9631745.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(}\FunctionTok{lm}\NormalTok{(expend}\SpecialCharTok{\textasciitilde{}}\NormalTok{employ}\SpecialCharTok{+}\NormalTok{lawyers}\SpecialCharTok{+}\NormalTok{bad,}\AttributeTok{data=}\NormalTok{ex))[[}\DecValTok{8}\NormalTok{]]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.9638741
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(}\FunctionTok{lm}\NormalTok{(expend}\SpecialCharTok{\textasciitilde{}}\NormalTok{employ}\SpecialCharTok{+}\NormalTok{lawyers}\SpecialCharTok{+}\NormalTok{crime,}\AttributeTok{data=}\NormalTok{ex))[[}\DecValTok{8}\NormalTok{]]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.9631881
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(}\FunctionTok{lm}\NormalTok{(expend}\SpecialCharTok{\textasciitilde{}}\NormalTok{employ}\SpecialCharTok{+}\NormalTok{lawyers}\SpecialCharTok{+}\NormalTok{pop,}\AttributeTok{data=}\NormalTok{ex))[[}\DecValTok{8}\NormalTok{]]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.9637326
+\end{verbatim}
+
+Since the models did not yield any significant results, the step-up
+method stopped.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(}\FunctionTok{lm}\NormalTok{(expend}\SpecialCharTok{\textasciitilde{}}\NormalTok{bad}\SpecialCharTok{+}\NormalTok{crime}\SpecialCharTok{+}\NormalTok{lawyers}\SpecialCharTok{+}\NormalTok{employ}\SpecialCharTok{+}\NormalTok{pop,}\AttributeTok{data=}\NormalTok{ex))[[}\DecValTok{8}\NormalTok{]]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.9675314
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(}\FunctionTok{lm}\NormalTok{(expend}\SpecialCharTok{\textasciitilde{}}\NormalTok{bad}\SpecialCharTok{+}\NormalTok{lawyers}\SpecialCharTok{+}\NormalTok{employ}\SpecialCharTok{+}\NormalTok{pop,}\AttributeTok{data=}\NormalTok{ex))[[}\DecValTok{8}\NormalTok{]]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.9665736
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(}\FunctionTok{lm}\NormalTok{(expend}\SpecialCharTok{\textasciitilde{}}\NormalTok{bad}\SpecialCharTok{+}\NormalTok{lawyers}\SpecialCharTok{+}\NormalTok{employ,}\AttributeTok{data=}\NormalTok{ex))[[}\DecValTok{8}\NormalTok{]]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.9638741
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(}\FunctionTok{lm}\NormalTok{(expend}\SpecialCharTok{\textasciitilde{}}\NormalTok{lawyers}\SpecialCharTok{+}\NormalTok{employ,}\AttributeTok{data=}\NormalTok{ex))[[}\DecValTok{8}\NormalTok{]]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.9631745
+\end{verbatim}
+
+All of these models did not yield any significant results, so the
+step-down method stopped. Hence, expend\textasciitilde lawyers+employ is
+the final model for both methods, which
+\(expend = -110.7+0.002971\times employ + 0.02686\times lawyers\).
+
+\hypertarget{c-2}{%
+\paragraph{c)}\label{c-2}}
+
+\includegraphics{Assignment02_group43_files/figure-latex/unnamed-chunk-23-1.pdf}
+
+From question(a), it already shows the collinearity of dependent and
+independent variables. The above graphs claims that the spread of
+residuals against variables did not show such a pattern existing. And
+the QQ-plot shows the residuals are normally distributed.
+
+\includegraphics{Assignment02_group43_files/figure-latex/unnamed-chunk-24-1.pdf}
+
+The added variable plots also show that there is no such specific curved
+pattern visible.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{shapiro.test}\NormalTok{(}\FunctionTok{residuals}\NormalTok{(exlm))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  residuals(exlm)
+## W = 0.8475, p-value = 1.118e-05
+\end{verbatim}
+
+The Shapiro-Wilk normality test shows the same as the QQ-plot, which
+means it is still normally distributed since \(p\)-value=1.118e-05
+\textless{} 0.05.
+
+\includegraphics{Assignment02_group43_files/figure-latex/unnamed-chunk-26-1.pdf}
+
+\newline Moreover, there is no patterns or errors are visible in the
+scatter plot of residuals against \(Y\) (and \(\hat{Y}\) ).
+
+\end{document}
