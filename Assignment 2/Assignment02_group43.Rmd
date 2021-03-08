@@ -49,6 +49,8 @@ interaction.plot(environment,humidity,hours, main="Environment vs. Humidity")
 interaction.plot(humidity,environment,hours, main="Humidity vs. Environment")
 ```
 
+#### **c)**
+
 ```{r}
 aovhoursenv=lm(hours~environment*humidity)
 anova_hours = anova(aovhoursenv)
