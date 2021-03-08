@@ -1,0 +1,242 @@
+---
+title: "Assignment 2"
+author: "Andrei Udriste, Xinyu Hu, Maria Gherghina-Tudor - Group 43"
+date: "2021/3/7"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### **Exercise 1.** *Moldy bread*
+
+### **Exercise 2.** Search engine
+
+#### **a)**
+
+```{r}
+I=3;B=5;N=1
+for(i in 1:B) print(sample(1:(N*I)))
+```
+
+To create a randomized block design we can use the function sample from R, which selects a random variable from a given dataset. I represents the number of interfaces, 3. B represents the number of levels of computational skills, 5.
+
+#### **b)**
+
+```{r}
+search_data = read.delim("search.txt", header=T, sep="")
+par(mfrow=c(2,2))
+boxplot(time~skill, main="effect of skill", data=search_data)
+boxplot(time~interface, main="effect of interface", data=search_data)
+interaction.plot(search_data$skill, search_data$interface, search_data$time, col = c('red', 'blue', 'green'), main = "Skill vs. interface", data=search_data)
+interaction.plot(search_data$interface, search_data$skill, search_data$time, col = c('red', 'blue', 'yellow', 'green', 'black'), main = "Interface vs. skill", data=search_data)
+```
+
+The first step in analyzing the provided data is to create box plots for the skill level of the users and the used interfaces and see what are the differences in those boxplots. If we observe the box plots we can observe that the skill level impacts the search time for the users. The same can be said about the interfaces, where the first interfaces provides a lower search time than the other two interfaces.
+
+```{r}
+factor_skills = factor(search_data$skill)
+factor_interface = factor(search_data$interface)
+search_aov = lm(time~factor_interface + factor_skills, data=search_data)
+anova(search_aov)
+```
+
+After performing the ANOVA test the $p$-value 0.0142 was obtained, this means that the null hypotheses is rejected, so the search time is different for particular interfaces.
+
+```{r}
+cat("Interface with the highest time =", search_data$interface[search_data$time == max(search_data$time)])
+```
+
+The interface that has the highest individual and mean search time is number 3.
+
+#### **c)**
+
+```{r}
+par(mfrow=c(1,2));qqnorm(residuals(search_aov), main="QQ-plot of Residuals");plot(fitted(search_aov),residuals(search_aov), main="Residuals vs. Fitted")
+```
+
+The two graphs look ok. The QQ-plot look almost normal, the only problem that would make us doubt the normality of the data is the bump present in the upper region, but is not that significant. The fitted plot looks great, the fitted value have a good spread and there doesn't seem to be any pattern.
+
+```{r}
+shapiro.test(residuals(search_aov))
+```
+
+#### d)
+
+```{r}
+friedman.test(search_data$time, search_data$interface, search_data$skill, data=search_data)
+```
+
+#### e)
+
+```{r}
+search_one_aov = lm(time~interface, data=search_data)
+print(anova(search_one_aov), signif.stars=F)
+```
+
+### **Exercise 3.** Feedingstuffs for cows
+
+#### a)
+
+```{r fig.width = 6, fig.height = 3.5}
+cow = read.table('cow.txt', header=T); cow$id= factor(cow$id); cow$per = factor(cow$per)
+boxplot(cow$milk[cow$treatment == "A"], cow$milk[cow$treatment == "B"])
+```
+
+In the boxplot above we can observe the two milk quantities obtained after using each treatment. It can be observed that there is almost no difference between the two milk quantities.
+
+```{r}
+cowlm = lm(milk ~ id + per + treatment, data = cow)
+anova(cowlm)
+```
+
+To draw a better conclusion between the two treatments we can use the ANOVA test, which will give us a $p$-value of 0.51654. This means that we will accept the null hypothesis H0, so there is no difference between the two treatments.
+
+#### b)
+
+```{r}
+library(lme4)
+cowlmer = lmer(milk ~ per + treatment + (1|id), data = cow, REML = FALSE)
+cowlmer1 = lmer(milk ~ per + (1|id), data = cow, REML = FALSE)
+anova(cowlmer1, cowlmer)
+```
+
+Another way to test the difference between the two treatments is to create two models, one with the treatment and one without the treatment and observe the difference between those two treatments. After computing the difference between the two models we obtain a $p$-value of 0.446, this means that we accept the null hypothesis H0, so there is no significant difference between the two treatments so we can conclude that the treatment doesn't have a big influence over the model.
+
+#### c)
+
+```{r}
+attach(cow)
+t.test(milk[treatment=="A"], milk[treatment=="B"],paired=TRUE)
+```
+
+The last way we can try to test the difference between the two treatments is to perform a $t$-test on the two milk samples after using each treatment. After computing the $t$-test we obtain a $p$-value of 0.8281 this means that we accept the null hypothesis H0, so there is no significant difference between the two treatments. This means that all three test obtain the same conclusion, that the null hypothesis is accepted, but in the case of the $t$-test the $p$-value was considerably bigger than in the case of the other tests. But there is a clear problem with using the $t$-test in this case, mainly that we only look at the treatment factor and we discard any other factor that might influence the final result.
+
+### **Exercise 4.** Jane Austen
+
+### **Exercise 5.** Expenditure on criminal activities
+
+#### a)
+
+```{r, echo=FALSE, compress = T, fig.width = 6, fig.height = 3.5}
+ex = read.table(file="expensescrime.txt", header=T)
+attach(ex);par(mfrow=c(2,3))
+hist(expend); hist(bad); hist(crime)
+hist(lawyers); hist(employ); hist(pop)
+```
+
+\newline In case of finding the potential and influence points, the histograms are shown above. It is clear that the crime factor is normally distributed, and the rest of factors have the similar curve. It shows that there exists collinearity. \newline
+
+```{r,echo=FALSE,compress = T, fig.width = 6, fig.height = 3.5}
+plot(ex[,c(2:7)]);round(cor(ex[2:7]),2)
+```
+
+In the graph, (expend, crime), (bad, crime), (crime, lawyers), (crime, employ), (crime, pop) are not linear independently. And we need to see which predictor variables are involved in collinearity.
+
+```{r, echo=FALSE,include = FALSE}
+library(car)
+```
+
+```{r}
+exlm1 = lm(expend~bad+crime+lawyers+employ+pop, data=ex);vif(exlm1)
+exlm2 = lm(expend~crime+lawyers+employ+pop, data=ex); vif(exlm2)
+exlm3 = lm(expend~crime+employ+pop, data=ex); vif(exlm3)
+exlm4 = lm(expend~crime+pop, data=ex); vif(exlm4)
+```
+
+```{r, eval=FALSE}
+exlm5 = lm(expend~crime, data=ex);vif(exlm5)
+# Error in vif.default(exlm5) : model contains fewer than 2 terms
+```
+
+In exlm1, exlm2 and exlm3, all VIF's are large, so there is a collinearity problem, but the exlm4 and exlm5 are OK.
+
+```{r, compress = T, fig.width = 6, fig.height = 3.5}
+plot(cooks.distance(exlm1),type="b")
+round(cooks.distance(exlm1),2)
+```
+
+Thus, the potential and influence points are Point(5), Point(8), Point(35) and Point(44).
+
+#### b)
+
+\newline First, we start with step-up method.
+
+```{r}
+summary(lm(expend~bad,data=ex))[[8]]
+summary(lm(expend~crime,data=ex))[[8]]
+summary(lm(expend~lawyers,data=ex))[[8]]
+summary(lm(expend~employ,data=ex))[[8]]
+summary(lm(expend~pop,data=ex))[[8]]
+```
+
+The employ has highest value: 0.9539745.
+
+```{r}
+summary(lm(expend~employ+bad,data=ex))[[8]]
+summary(lm(expend~employ+crime,data=ex))[[8]]
+summary(lm(expend~employ+pop,data=ex))[[8]]
+summary(lm(expend~employ+lawyers,data=ex))[[8]]
+```
+
+The model of expend\~employ+lawyers has highest value: 0.9631745.
+
+```{r}
+summary(lm(expend~employ+lawyers+bad,data=ex))[[8]]
+summary(lm(expend~employ+lawyers+crime,data=ex))[[8]]
+summary(lm(expend~employ+lawyers+pop,data=ex))[[8]]
+```
+
+Since the models did not yield any significant results, the step-up method stopped.
+
+```{r}
+summary(lm(expend~bad+crime+lawyers+employ+pop,data=ex))[[8]]
+summary(lm(expend~bad+lawyers+employ+pop,data=ex))[[8]]
+summary(lm(expend~bad+lawyers+employ,data=ex))[[8]]
+summary(lm(expend~lawyers+employ,data=ex))[[8]]
+```
+
+All of these models did not yield any significant results, so the step-down method stopped. Hence, expend\~lawyers+employ is the final model for both methods, which $expend = -110.7+0.002971\times employ + 0.02686\times lawyers$.
+
+#### c)
+
+```{r, echo=FALSE, compress = T, fig.width = 6, fig.height = 3.5}
+exlm=lm(expend~employ+lawyers,data=ex)
+par(mfrow=c(2,3))
+plot(residuals(exlm),employ,xlab="Residuals",main="Residuals vs. Employ")
+plot(residuals(exlm),lawyers,xlab="Residuals",main="Residuals vs. Lawyers")
+plot(residuals(exlm),bad,xlab="Residuals",main="Residuals vs. Bad")
+plot(residuals(exlm),crime,xlab="Residuals",main="Residuals vs. Crime")
+plot(residuals(exlm),pop,xlab="Residuals",main="Residuals vs. Pop")
+qqnorm(residuals(exlm))
+```
+
+From question(a), it already shows the collinearity of dependent and independent variables. The above graphs claims that the spread of residuals against variables did not show such a pattern existing. And the QQ-plot shows the residuals are normally distributed.
+
+```{r, echo=FALSE, compress = T, fig.width = 6, fig.height = 3.5}
+x1=residuals(lm(lawyers~crime+employ+pop+bad))
+y1=residuals(lm(expend~bad+crime+employ+pop))
+x2=residuals(lm(employ~lawyers+crime+pop+bad)) 
+y2=residuals(lm(expend~bad+lawyers+crime+pop)) 
+par(mfrow=c(1,2))
+plot(x1,y1,main="Added variable plot for lawyers", xlab="Residual of lawyers", ylab="Residual of expend", cex=0.7)
+plot(x2,y2,main="Added variable plot for employ", xlab="Residual of employ", ylab="Residual of expend", cex=0.7)
+```
+
+The added variable plots also show that there is no such specific curved pattern visible.
+
+```{r}
+shapiro.test(residuals(exlm))
+```
+
+The Shapiro-Wilk normality test shows the same as the QQ-plot, which means it is still normally distributed since $p$-value=1.118e-05 \< 0.05.
+
+```{r, echo=FALSE, compress = T, fig.width = 6, fig.height = 3.5}
+plot(residuals(exlm),fitted(exlm))
+```
+
+\newline Moreover, there is no patterns or errors are visible in the scatter plot of residuals against $Y$ (and $\hat{Y}$ ).
