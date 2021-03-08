@@ -226,7 +226,7 @@ consistency=chisq.test(austendata)
 
 Pearson's Chi-squared test: $X$-squared = 12.271, $df$ = 10, $p$-value = 0.2673
 
-Since the p-value is high (0.26), the null hypothesis is to be rejected, therefore confirming a relationship between the variables. As expected, it can be concluded that there is a consistency throughout Austen's novels.
+Since the p-value is high (0.26), the null hypothesis is to be rejected, therefore confirming a relationship between the variables. As expected, it can be concluded that there is a consistency throughout Austen's novels, with no significant difference throughout the word counts of the different books.
 
 The main inconsistencies can be found by investigating the residuals:
 
@@ -350,7 +350,7 @@ plot(residuals(exlm),pop,xlab="Residuals",main="Residuals vs. Pop")
 qqnorm(residuals(exlm))
 ```
 
-From question(a), it already shows the collinearity of dependent and independent variables. The above graphs claims that the spread of residuals against variables did not show such a pattern existing. And the QQ-plot shows the residuals are normally distributed.
+From question (a), it already shows the collinearity of dependent and independent variables. The above graphs claims that the spread of residuals against variables did not show such a pattern existing. And the QQ-plot shows the residuals are normally distributed.
 
 ```{r, echo=FALSE, compress = T, fig.width = 6, fig.height = 3.5}
 x1=residuals(lm(lawyers~crime+employ+pop+bad))
