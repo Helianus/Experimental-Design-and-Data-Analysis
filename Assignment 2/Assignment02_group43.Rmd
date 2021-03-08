@@ -29,11 +29,8 @@ rbind(rep(1:environment,each=N*humidity),rep(1:humidity,N*environment),sample(1:
 ```
 
 Interpreting the table resulting from the randomization process:
-
 -   each column can be seen as a different unit (where the ID of the unit is the value in the third row)
-
 -   the first row can be seen as the environment that each unit has to be measured in
-
 -   the second row can be seen as the humidity group of the unit.
 
 #### **b)**
@@ -251,11 +248,8 @@ residuals(chisq.test(austen))
 ```
 
 The main differences are found for the count of the following words:
-
 -   "an" and "with" - both words have been used significantly more by the admirer, compared to Austen
-
 -   "that" - has been used significantly less by the admirer, compared to Austen
-
 Therefore, it can be concluded that the admirer was quite successful in imitating Austen's writing style, with small differences for a few words.
 
 ### **Exercise 5.** Expenditure on criminal activities
