@@ -1,7 +1,7 @@
 ---
 title: "Assignment 2"
 author: "Andrei Udriste, Xinyu Hu, Maria Gherghina-Tudor - Group 43"
-date: "2021/3/7"
+date: "2021/3/8"
 output:
   pdf_document: default
   html_document:
@@ -15,8 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ### **Exercise 1.** *Moldy bread*
 
 ```{r}
-#install.packages("car")
-#library("car")
+library("car")
 bread = read.table(file="bread.txt", header=TRUE, sep=" ")
 attach(bread)
 ```
@@ -29,19 +28,22 @@ rbind(rep(1:env,each=N*hum),rep(1:hum,N*env),sample(1:(N*env*hum)))
 ```
 
 Interpreting the table resulting from the randomization process:
+
 -   each column can be seen as a different unit (where the ID of the unit is the value in the third row)
+
 -   the first row can be seen as the environment that each unit has to be measured in
+
 -   the second row can be seen as the humidity group of the unit.
 
 #### **b)**
 
-```{r}
+```{r,echo=FALSE,compress = T, fig.width = 5, fig.height = 3}
 par(mfrow=c(1,2))
 boxplot(hours~environment, main = "Effect of environment")
 boxplot(hours~humidity, main = "Effect of humidity")
 ```
 
-```{r}
+```{r,echo=FALSE,compress = T, fig.width = 7, fig.height = 4}
 par(mfrow=c(1,2))
 interaction.plot(environment,humidity,hours, main="Environment vs. Humidity")
 interaction.plot(humidity,environment,hours, main="Humidity vs. Environment")
@@ -56,7 +58,7 @@ summary(anova_hours)
 
 When performing a one way ANOVA test to analysis the effect of the factors on the decay and their interaction, it can be concluded that both factors have a significant effect on the time of the decay: $F$=131.9, $p$-value: 4.676e-10
 
-```{r}
+```{r,echo=FALSE,compress = T, fig.width = 5, fig.height = 3}
 par(mfrow=c(1,2))
 qqnorm(residuals(aovhoursenv))
 plot(fitted(aovhoursenv),residuals(aovhoursenv), main='Interaction plot')
@@ -66,27 +68,13 @@ When analysing the graphical representation the interaction (the interaction plo
 
 #### **d)**
 
-```{r}
-duration=as.vector(as.matrix(bread[1:18,]))
-id=as.factor(rep(1:18,4))
-environment=as.factor(rep(1:3,each=6))
-humidity=as.factor(rep(1:2,each=3))
-breaddata=data.frame(cbind(duration,id,environment,humidity))
-breaddata[1:18,]
-```
+Considering the summary of the data discussed in the previous question, it is clear that the interaction of the 2 factors has a significant effect on the time of the decay.
 
-```{r}
-boxplot(duration~humidity, xlab="humidity", ylab="duration")
-interaction.plot()
-```
-
-```{r}
-friedman.test(duration,environment,id,data=breaddata)
-```
+Therefore, when discussing the effects of the main factors, the interaction effect has to also be taken into account, thus the question is not exactly correct.
 
 #### **e)**
 
-```{r}
+```{r,echo=FALSE,compress = T, fig.width = 5, fig.height = 3}
 par(mfrow=c(1,2))
 qqnorm(residuals(aovhoursenv),main = "QQ-plot residuals"); 
 plot(fitted(aovhoursenv),residuals(aovhoursenv), main = "Residuals against fitted values")
@@ -111,13 +99,17 @@ To create a randomized block design we can use the function sample from R, which
 
 #### **b)**
 
-```{r,echo=FALSE,compress = T, fig.width = 6, fig.height = 3.5}
+```{r,echo=FALSE,compress = T, fig.width = 5, fig.height = 3}
 search_data = read.delim("search.txt", header=T, sep="")
-par(mfrow=c(2,2))
+par(mfrow=c(1,2))
 boxplot(time~skill, main="effect of skill", data=search_data)
 boxplot(time~interface, main="effect of interface", data=search_data)
-interaction.plot(search_data$skill, search_data$interface, search_data$time, col = c('red', 'blue', 'green'), main = "Skill vs. interface", data=search_data)
-interaction.plot(search_data$interface, search_data$skill, search_data$time, col = c('red', 'blue', 'yellow', 'green', 'black'), main = "Interface vs. skill", data=search_data)
+```
+
+```{r,echo=FALSE,compress = T, fig.width = 5, fig.height = 3}
+par(mfrow=c(1,2))
+interaction.plot(search_data$skill, search_data$interface, search_data$time, col = c('red', 'blue', 'green'), main = "Skill vs. time" ,xlab="skill" ,ylab="time")
+interaction.plot(search_data$interface, search_data$skill, search_data$time, col = c('red', 'blue', 'yellow', 'green', 'black'), main = "Interface vs. time", xlab="interface", ylab="time")
 ```
 
 The first step in analyzing the provided data is to create box plots for the skill level of the users and the used interfaces and see what are the differences in those boxplots. If we observe the box plots we can observe that the skill level impacts the search time for the users. The same can be said about the interfaces, where the first interfaces provides a lower search time than the other two interfaces.
@@ -125,21 +117,25 @@ The first step in analyzing the provided data is to create box plots for the ski
 ```{r}
 factor_skills = factor(search_data$skill)
 factor_interface = factor(search_data$interface)
-search_aov = lm(time~factor_interface + factor_skills, data=search_data)
+search_aov = lm(time~factor_interface + factor_skills, data = search_data)
 anova(search_aov)
 ```
 
 After performing the ANOVA test the $p$-value 0.0142 was obtained, this means that the null hypotheses is rejected, so the search time is different for particular interfaces.
 
 ```{r}
-cat("Interface with the highest time =", search_data$interface[search_data$time == max(search_data$time)])
+summary(search_aov)
 ```
 
-The interface that has the highest individual and mean search time is number 3.
+```{r}
+cat("The smallest time is equal with:", mean(search_data$time[search_data$interface == 1]) + mean(search_data$time[search_data$interface == 1]) - mean(search_data$time[search_data$skill == 1]))
+```
+
+The interface that has the highest individual and mean search time is number 3, having a standard deviation 4.460 bigger than the normal standard deviation(15.013). The shortest time would be for the first interface(1) and and participant with the highest computational level(1) which is equal with 18.92. If we want to find the time a level 3 user would spend on a level 3 interface we need to compute $mu$ + $alfa_3$ + $Beta_2$ which is equal with 15.013 + 4.460 + 3.033 = 22.506.
 
 #### **c)**
 
-```{r,echo=FALSE,compress = T, fig.width = 6, fig.height = 3.5}
+```{r,echo=FALSE,compress = T, fig.width = 5, fig.height = 3}
 par(mfrow=c(1,2));qqnorm(residuals(search_aov), main="QQ-plot of Residuals");plot(fitted(search_aov),residuals(search_aov), main="Residuals vs. Fitted")
 ```
 
@@ -159,6 +155,8 @@ After running the test we obtain a $p$-value = 0.2817, thins means that we do no
 friedman.test(search_data$time, search_data$interface, search_data$skill, data=search_data)
 ```
 
+After computing the Friedman test we obtain a $p$-value of 0.04076, this means that we will reject the null hypothesis H0, so there is a an effect in the interface that is used.
+
 #### e)
 
 ```{r}
@@ -166,11 +164,13 @@ search_one_aov = lm(time~interface, data=search_data)
 print(anova(search_one_aov), signif.stars=F)
 ```
 
+After performing the one-way-ANOVA test we obtain a $p$-value of 0.02852, this means that we will reject the null hypothesis, so the interface has an effect on the time a user spends searching. But using a one-way-ANOVA test here is wrong because we only take into consideration the interface and we ignore the skill level of each participant which also has an influence on the time spend searching.
+
 ### **Exercise 3.** Feedingstuffs for cows
 
 #### a)
 
-```{r,echo=FALSE,compress = T, fig.width = 6, fig.height = 3.5}
+```{r,echo=FALSE,compress = T, fig.width = 5, fig.height = 3}
 cow = read.table('cow.txt', header=T); cow$id= factor(cow$id); cow$per = factor(cow$per)
 boxplot(cow$milk[cow$treatment == "A"], cow$milk[cow$treatment == "B"])
 ```
@@ -183,6 +183,16 @@ anova(cowlm)
 ```
 
 To draw a better conclusion between the two treatments we can use the ANOVA test, which will give us a $p$-value of 0.51654. This means that we will accept the null hypothesis H0, so there is no difference between the two treatments.
+
+To make sure that the ANOVA test is effective we should verify the QQ-plot and the dispersion of the residual to see if the distribution of the data is normal or not.
+
+```{r,echo=FALSE,compress = T, fig.width = 5, fig.height = 3}
+par(mfrow=c(1,2))
+plot(cowlm, 1)
+plot(cowlm, 2)
+```
+
+The QQ-plot looks normal, and the residuals appear to be evenly distributed so we can conclude that de data has a normal distribution.
 
 #### b)
 
@@ -208,20 +218,21 @@ The last way we can try to test the difference between the two treatments is to 
 
 ```{r}
 austen=read.table("austen.txt",header=TRUE)
-austendata=data.frame(austen$word, austen$Sense, austen$Emma, austen$Sand1)
+austendata=data.frame(austen$Sense, austen$Emma, austen$Sand1)
 attach(austendata)
 ```
 
 #### a)
 
-For a statistical analysis of the word frequencies in relation to Jane Austen's novel Sanditon, the amount of specific words used in her previous works is compared to the ones used by the admirer who tried to replicate her style. For such comparison, it is needed to determine if the frequency counts for specific words are equally distributed for both writers. Therefore, a contingency table test for homogenity is the most suitable.
+For a statistical analysis of the word frequencies in relation to Jane Austen's novel Sanditon, the amount of specific words used in her previous works is compared to the ones used by the admirer who tried to replicate her style. For such comparison, it is needed to determine if the frequency counts for specific words are equally distributed for both writers. Therefore, a contingency table test for homogeneity is the most suitable.
 
 #### b)
 
-To analyse Austen's consistency throughout her different novels, a Chi-squared test can be used. This is performed on the columns containing data based on her writings (Sense, Emma, Sand1):
+To analyze Austen's consistency throughout her different novels, a Chi-squared test can be used. This is performed on the columns containing data based on her writings (Sense, Emma, Sand1):
 
 ```{r}
 consistency=chisq.test(austendata)
+consistency
 ```
 
 Pearson's Chi-squared test: $X$-squared = 12.271, $df$ = 10, $p$-value = 0.2673
@@ -241,32 +252,34 @@ admirer=chisq.test(austen)
 admirer
 ```
 
-Pearson's Chi-squared test: $X$-squared = 45.578, $df$= 15, $p$-value = 6.205e-05. 
-Since the p-value is very high (6.205e-05), it can be concluded that the null hypothesis is rejected, thus confirming a similarity between the writers' style. The main differences between the writers can be found once again by inspecting the residuals:
+Pearson's Chi-squared test: $X$-squared = 45.578, $df$= 15, $p$-value = 6.205e-05. Since the p-value is very high (6.205e-05), it can be concluded that the null hypothesis is rejected, thus confirming a similarity between the writers' style. The main differences between the writers can be found once again by inspecting the residuals:
 
 ```{r}
 residuals(chisq.test(austen))
 ```
 
 The main differences are found for the count of the following words:
+
 -   "an" and "with" - both words have been used significantly more by the admirer, compared to Austen
+
 -   "that" - has been used significantly less by the admirer, compared to Austen
+
 Therefore, it can be concluded that the admirer was quite successful in imitating Austen's writing style, with small differences for a few words.
 
 ### **Exercise 5.** Expenditure on criminal activities
 
 #### a)
 
-```{r, echo=FALSE, compress = T, fig.width = 6, fig.height = 3.5}
+```{r,echo=FALSE,compress = T, fig.width = 5, fig.height = 3}
 ex = read.table(file="expensescrime.txt", header=T)
 attach(ex);par(mfrow=c(2,3))
 hist(expend); hist(bad); hist(crime)
 hist(lawyers); hist(employ); hist(pop)
 ```
 
-\newline In case of finding the potential and influence points, the histograms are shown above. It is clear that the crime factor is normally distributed, and the rest of factors have the similar curve. It shows that there exists collinearity. \newline
+In case of finding the potential and influence points, the histograms are shown above. It is clear that the crime factor is normally distributed, and the rest of factors have the similar curve. It shows that there exists collinearity.
 
-```{r,echo=FALSE,compress = T, fig.width = 6, fig.height = 3.5}
+```{r,echo=FALSE,compress = T, fig.width = 5, fig.height = 3}
 plot(ex[,c(2:7)]);round(cor(ex[2:7]),2)
 ```
 
@@ -290,7 +303,7 @@ exlm5 = lm(expend~crime, data=ex);vif(exlm5)
 
 In exlm1, exlm2 and exlm3, all VIF's are large, so there is a collinearity problem, but the exlm4 and exlm5 are OK.
 
-```{r, compress = T, fig.width = 6, fig.height = 3.5}
+```{r,echo=FALSE,compress = T, fig.width = 5, fig.height = 3}
 plot(cooks.distance(exlm1),type="b")
 round(cooks.distance(exlm1),2)
 ```
@@ -299,7 +312,7 @@ Thus, the potential and influence points are Point(5), Point(8), Point(35) and P
 
 #### b)
 
-\newline First, we start with step-up method.
+First, we start with step-up method.
 
 ```{r}
 summary(lm(expend~bad,data=ex))[[8]]
@@ -339,7 +352,7 @@ All of these models did not yield any significant results, so the step-down meth
 
 #### c)
 
-```{r, echo=FALSE, compress = T, fig.width = 6, fig.height = 3.5}
+```{r,echo=FALSE,compress = T, fig.width = 5, fig.height = 3}
 exlm=lm(expend~employ+lawyers,data=ex)
 par(mfrow=c(2,3))
 plot(residuals(exlm),employ,xlab="Residuals",main="Residuals vs. Employ")
@@ -350,9 +363,9 @@ plot(residuals(exlm),pop,xlab="Residuals",main="Residuals vs. Pop")
 qqnorm(residuals(exlm))
 ```
 
-From question (a), it already shows the collinearity of dependent and independent variables. The above graphs claims that the spread of residuals against variables did not show such a pattern existing. And the QQ-plot shows the residuals are normally distributed.
+From question(a), it already shows the collinearity of dependent and independent variables. The above graphs claims that the spread of residuals against variables did not show such a pattern existing. And the QQ-plot shows the residuals are normally distributed.
 
-```{r, echo=FALSE, compress = T, fig.width = 6, fig.height = 3.5}
+```{r,echo=FALSE,compress = T, fig.width = 5, fig.height = 3}
 x1=residuals(lm(lawyers~crime+employ+pop+bad))
 y1=residuals(lm(expend~bad+crime+employ+pop))
 x2=residuals(lm(employ~lawyers+crime+pop+bad)) 
@@ -370,8 +383,8 @@ shapiro.test(residuals(exlm))
 
 The Shapiro-Wilk normality test shows the same as the QQ-plot, which means it is still normally distributed since $p$-value=1.118e-05 \< 0.05.
 
-```{r, echo=FALSE, compress = T, fig.width = 6, fig.height = 3.5}
+```{r,echo=FALSE,compress = T, fig.width = 5, fig.height = 3}
 plot(residuals(exlm),fitted(exlm))
 ```
 
-\newline Moreover, there is no patterns or errors are visible in the scatter plot of residuals against $Y$ (and $\hat{Y}$ ).
+Moreover, there is no patterns or errors are visible in the scatter plot of residuals against $Y$ (and $\hat{Y}$ ).
