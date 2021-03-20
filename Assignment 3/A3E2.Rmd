@@ -1,0 +1,144 @@
+---
+title: "A3E1"
+author: "Andrei Udriste"
+date: "2021/3/16"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(fig.width=6, fig.height=4, fig.align = "center")
+library(knitr)
+```
+
+# Exercise 2.
+
+## a)
+
+```{r,echo=FALSE}
+data = read.table('titanic.txt', header=T)
+attach(data)
+survivars_age = Age[Survived == 1]
+not_survivars_age = Age[Survived == 0]
+boxplot(Age, survivars_age, not_survivars_age)
+```
+
+It can be observed from the boxplot above tat the age didn't have any major impact in someone surviving or not. In boxplot (1) we have the age of all the passengers, (2) represent the boxplot of the ages of all surviving passengers and in (3) we have the ages of the passengers that didn't survive.
+
+```{r}
+surv_fem = table(Survived[Sex == "female"])
+surv_men = table(Survived[Sex == "male"])
+
+par(mfrow=c(1,2))
+barplot(surv_fem , ylab="Number of survivors", xlab="Female")
+barplot(surv_men, ylab="Number of survivors", xlab="Men")
+```
+
+We can observe a clear difference in between the two barplots, to be more precise the number of female survivors is much more higher than the one of male survivors. Another observation would be the fact that for non surviving passengers, in this case the number of females is smaller than the number of males.
+
+```{r}
+surv_1cls = table(Survived[PClass == "1st"])
+surv_2cls = table(Survived[PClass == "2nd"])
+surv_3cls = table(Survived[PClass == "3rd"])
+
+par(mfrow=c(1,3))
+barplot(surv_1cls, ylab="Number of survivors", xlab="1st Class")
+barplot(surv_2cls, ylab="Number of survivors", xlab="2nd Class")
+barplot(surv_3cls, ylab="Number of survivors", xlab="3rd Class")
+```
+
+More differences can be observed in the survival rates of the passengers from the 3 classes. In the first class we can see that the number of survivors is higher than the number of non-survivors, unfortunately we can not say the same for the other two classes where the number non-survivors is higher than the number of survivors. This can be observed mostly in the 3rd class where the number of non-survivors is 4 times bigger than the number of survivors. One common thing that can be observed for all classes is that the number of survivors is between 100 and 200 for all 3 of them.
+
+## b)
+
+```{r}
+fact_PClass = factor(PClass)
+fact_Sex = factor(Sex)
+fact_Age = factor(Age)
+titglm = glm(Survived ~ fact_PClass + fact_Sex + Age, data = data, family=binomial)
+summary(titglm)
+```
+
+After computing the model we can compute all the odds by summing all the Estimates of the factors that are of interest and applying exp(sum), which translates to e to the power of the sum.
+
+```{r}
+cat("odds of 1st class + female + age =", exp(3.759662 - 0 - 0 - 0.039177), "\n")
+cat("odds of 1st class + male + age =", (3.759662 - 0 - 2.631357 - 0.039177), "\n")
+cat("odds of 2st class + female + age =", exp(3.759662 - 1.291962 - 0 - 0.039177), "\n")
+cat("odds of 2st class + male + age =", exp(3.759662 - 1.291962 - 2.631357 - 0.039177), "\n")
+cat("odds of 3st class + female + age =", exp(3.759662 - 2.521419 - 0 - 0.039177), "\n")
+cat("odds of 3st class + male + age =", exp(3.759662 - 2.521419 - 2.631357 - 0.039177), "\n")
+```
+
+After computing the we can observe that the same trends that where present in the graphs from point **a)** are present also here. More exactly the female have a higher odds than male and as the class is lower the odds of survival also decrease. Based on this we can see that the biggest odds of survival are for the females from the 1st class, while the worst ones are for the male in the 3rd class.
+
+## c)
+
+```{r}
+glm1 = glm(Survived ~ fact_Sex * fact_PClass * Age, data = data, family=binomial)
+anova(glm1, test="Chisq")
+```
+
+```{r,echo=FALSE}
+titglm2 = glm(Survived ~ fact_PClass + fact_Sex, data = data, family=binomial)
+summary(titglm2)
+```
+
+```{r}
+cat("odds of 1st class + male =", predict(titglm2, data.frame(fact_PClass = "1st", fact_Sex = "male", Age = "53"), type="response"), "\n")
+cat("odds of 2st class + male =",predict(titglm2, data.frame(fact_PClass = "2nd", fact_Sex = "male", Age = "53"), type="response"), "\n")
+cat("odds of 3st class + male =",predict(titglm2, data.frame(fact_PClass = "3rd", fact_Sex = "male", Age = "53"), type="response"), "\n")
+cat("odds of 1st class + female =",predict(titglm2, data.frame(fact_PClass = "1st", fact_Sex = "female", Age = "53"), type="response"), "\n")
+cat("odds of 1st class + female =",predict(titglm2, data.frame(fact_PClass = "2nd", fact_Sex = "female", Age = "53"), type="response"), "\n")
+cat("odds of 1st class + female =",predict(titglm2, data.frame(fact_PClass = "3rd", fact_Sex = "female", Age = "53"), type="response"), "\n")
+```
+
+The graph shows that each estimate for each group depending on the thorax length, and three lines are parallel. Additionally, from the summary, it shows that $p$-value for $H_0: \mu_{low}=\mu_{high}$ is 0.2771 \> 0.05 and $p$-value for $H_0: \mu_{isolated}=\mu_{high}$ is 0.0545 \> 0.05. Therefore, we reject both of them, and this dependence is similar under all three conditions of sexual activity.
+
+## d)
+
+```{r}
+summary(ffaov)$r.squared
+summary(fflm)$r.squared
+```
+
+The analyses with thorax length is preferred, because the one with thorax length has a explained variance of 70.9%, but the one without thorax length has only 35%. None of them is wrong.
+
+## e)
+
+```{r,echo=FALSE}
+par(mfrow=c(1,2))
+plot(fflm,2);plot(fflm,1)
+```
+
+```{r}
+mean(ffdata$thorax)
+```
+
+```{r}
+shapiro.test(residuals(fflm))
+```
+
+By checking QQ-plot and residuals vs. fitted plot, ANCOVA with thorax length and activity are independent to each other. In addition, we did not find certain patterns exist in the graph, even though they look normally distributed which is also checked by Shapiro-Wilk normality test.
+
+## f)
+
+```{r}
+fflaov=lm(longevity~thorax+activity, data=ffdata)
+anova(fflaov)
+```
+
+Even without the logarithm, the ANCOVA shows very similar with the one with logarithm.
+
+```{r}
+par(mfrow=c(1,2))
+plot(fflaov,2);plot(fflaov,1)
+```
+
+The graphs show that the residuals are normally distributed. And we can see a certain pattern existing in residuals fitted plot. This is also supported by Shapiro-Wilk normality test below.
+
+```{r}
+shapiro.test(residuals(fflaov))
+```
+
+However, the variance of residuals is getting larger as the the estimates gets larger. It does not reliable. Moreover, it is wise to use the model with logarithm.
