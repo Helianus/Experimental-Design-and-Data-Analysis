@@ -86,11 +86,20 @@ After computing the we can observe that the same trends that where present in th
 ## c)
 
 ```{r}
-glm1 = glm(Survived ~ fact_Sex * fact_PClass * Age, data = data, family=binomial)
+glm1 = glm(Survived ~ Age * fact_Sex, data = data, family=binomial)
 anova(glm1, test="Chisq")
 ```
 
-After verifying the interaction between the two factors (Sex, Class) and the numerical variable (Age) we obtain a $p$-value of 0.42 which is bigger than 0.05. Because of this we can conclude that we will not reject $H0$ so the numerical variable Age does not have a big influence over the outcome so we can eliminate it from the model.
+After verifying the interaction between the factors (Sex) and the numerical variable (Age) we obtain a $p$-value of 5.64e-07 which is smaller than 0.05. Because of this we can conclude that we will reject $H0$ so the numerical variable Age does have a big influence over the outcome so it is not recommended to eliminate it from the model.
+
+```{r}
+glm2 = glm(Survived ~ Age * fact_PClass, data = data, family=binomial)
+anova(glm2, test="Chisq")
+```
+
+After verifying the interaction between the two factors (Class) and the numerical variable (Age) we obtain a $p$-value of 0.558 which is bigger than 0.05. Because of this we can conclude that we will not reject $H0$ so the numerical variable Age does not have a big influence over the outcome so we can eliminate it from the model.
+
+Because of the interaction between Age and PClass we will create a model that is not dependent on Age.
 
 ```{r,echo=FALSE}
 titglm2 = glm(Survived ~ fact_PClass + fact_Sex, data = data, family=binomial)
