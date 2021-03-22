@@ -97,7 +97,7 @@ glm2 = glm(Survived ~ Age * fact_PClass, data = data, family=binomial)
 anova(glm2, test="Chisq")
 ```
 
-After verifying the interaction between the two factors (Class) and the numerical variable (Age) we obtain a $p$-value of 0.558 which is bigger than 0.05. Because of this we can conclude that we will not reject $H0$ so the numerical variable Age does not have a big influence over the outcome so we can eliminate it from the model.
+After verifying the interaction between the two factors (Class) and the numerical variable (Age) we obtain a $p$-value of 0.558 which is bigger than 0.05. Because of this we can conclude that we will not reject $H0$ so the numerical variable Age does not have a big influence over the outcome, so we can eliminate it from the model.
 
 Because of the interaction between Age and PClass we will create a model that is not dependent on Age.
 
@@ -106,7 +106,7 @@ titglm2 = glm(Survived ~ fact_PClass + fact_Sex, data = data, family=binomial)
 summary(titglm2)
 ```
 
-Because the variable Age doesn't have major influence in the outcome we can create a model that does not include it.
+Because the variable Age doesn't have a major influence in the outcome, we can create a model that does not include it.
 
 ```{r}
 p1m = predict(titglm2, data.frame(fact_PClass = "1st", fact_Sex = "male", Age = "53"), type="response")
@@ -175,6 +175,6 @@ After applying the Fisher test we obtain a $p$-value equal with 2.2e-16 which is
 
 ## f)
 
-Yes, the second approach is wring because it only test one factor at a time instead of both at the same time. On advantage of this approach is that we can test and see the influence of each factor separately on the Survived status.Based on this approach we can discard the factors that do not influence the outcome. One disadvantage is that we can only test one variable at at time and we can not see if there is any influence between two factors (ex: between PClass and Sex).
+Yes, the second approach is wrong, because it only test one factor at a time - instead of both at the same time. One advantage of this approach is that we can test and see the influence of each factor separately on the Survived status. Based on this approach, we can discard the factors that do not influence the outcome. One disadvantage is that we can only test one variable at at time and we can not see if there is any influence between two factors (ex: between PClass and Sex).
 
 The first method is much more suitable for this kind of analyses, having the advantage that we can also see the influence that different factors have on the outcome. But of course that there are also disadvantages, mainly that we may take into account factors that do not have a big influence on our output (ex: Age).
