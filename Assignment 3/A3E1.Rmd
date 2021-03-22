@@ -1,8 +1,11 @@
 ---
-title: "A3E1"
-author: "Xinyu Hu"
-date: "2021/3/16"
-output: pdf_document
+title: "Assignment 3"
+author: "Andrei Udriste, Xinyu Hu, Maria Gherghina-Tudor - Group 43"
+date: "2021/3/21"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -12,7 +15,9 @@ library(knitr)
 ```
 
 # Exercise 1.
+
 ## a)
+
 ```{r,echo=FALSE}
 ffdata = read.table('fruitflies.txt', header=T)
 ffdata$loglongevity = log(ffdata$longevity)
@@ -24,74 +29,352 @@ abline(lm(loglongevity~thorax,data=ffdata[ffdata$activity=="isolated",]),col="gr
 boxplot(loglongevity~thorax,data=ffdata)
 boxplot(loglongevity~activity, data=ffdata)
 ```
-It is quite clear there exists a positive linear relationship between loglongevity and thorax. And the boxplots shows that loglongevity has influenced by thorax and activity. 
+
+It is quite clear there exists a positive linear relationship between loglongevity and thorax. And the boxplots shows that loglongevity has influenced by thorax and activity.
+
 ```{r}
 ffaov = lm(loglongevity~activity, data=ffdata);anova(ffaov)
 ```
-The anova test for testing $H_0$ shows the $p$-value = 1.798e-07 < 0.05, which concludes longevity is effected by activity.
+
+The anova test for testing $H_0$ shows the $p$-value = 1.798e-07 \< 0.05, which concludes longevity is effected by activity.
+
 ```{r}
 summary(ffaov)
 ```
+
 From above summary, $\hat\mu$ = 3.60212, $\hat\alpha_{isolated}$=0.51722 and $\hat\alpha_{low}$=0.39771. Thus, estimated longevity of high $e^{3.60212}$=36.67, of isolated $e^{3.60212+0.51722}$=61.51 and of low $e^{3.60212+0.39771}$=54.58.
 
 ## b)
+
 ```{r}
 fflm = lm(loglongevity~thorax+activity,data=ffdata);drop1(fflm,test="F")
 ```
-With Single term deletions, $H_0$ is rejected because of $p$-value=4.000e-09 < 0.05. It shows that activity still influences longevity. 
+
+With Single term deletions, $H_0$ is rejected because of $p$-value=4.000e-09 \< 0.05. It shows that activity still influences longevity.
+
 ```{r}
 summary(fflm)
 ```
+
 The summary shows the $\hat\mu$=1.21893, $\hat\alpha_{isolated}$=0.40998 and $\hat\alpha_{low}$=0.28570. In this case, activity decreases longevity.
+
 ```{r}
 mean(ffdata$thorax)
 ```
+
 The average thorax length = 0.8245333. Since the model is $\hat{Y}_i = \hat\mu+\hat\alpha_i+\hat\beta X_i$, $\hat{Y}_{isolated} = 1.21893 + 0.40998+2.97899*0.8245333=4.085186455367$, $\hat{Y}_{low} = 1.21893 + 0.28570+2.97899*0.8245333=3.960906455367$ and $\hat{Y}_{high} = 1.21893 + 0+2.97899*0.8245333=3.675206455367$. Additionally, the longevity of isolated $e^{Y_{isolated}}=e^{4.085186455367}$=59.45, of low $e^{Y_{low}}=e^{3.960906455367}$=52.50 and of high $e^{Y_{high}}=e^{3.675206455367}$=39.45.
 
 ## c)
-```{r,echo=FALSE}
+
+```{r,echo=FALSE, compress = T, fig.width = 5, fig.height = 3}
 plot(loglongevity~thorax, pch=c(22, 23, 24), data=ffdata,main="sexual activity and thorax length")
 abline(lm(loglongevity~thorax,data=ffdata[ffdata$activity=="high",]),col="red")
 abline(lm(loglongevity~thorax,data=ffdata[ffdata$activity=="low",]),col="blue")
 abline(lm(loglongevity~thorax,data=ffdata[ffdata$activity=="isolated",]),col="green")
 ```
+
 ```{r}
 fflmm=lm(loglongevity~activity*thorax,data=ffdata);summary(fflmm)
 ```
-The graph shows that each estimate for each group depending on the thorax length, and three lines are parallel. Additionally, from the summary, it shows that $p$-value for $H_0: \mu_{low}=\mu_{high}$ is 0.2771 > 0.05 and $p$-value for $H_0: \mu_{isolated}=\mu_{high}$ is 0.0545 > 0.05. Therefore, we reject both of them, and this dependence is similar under all three conditions of sexual activity.
+
+The graph shows that each estimate for each group depending on the thorax length, and three lines are parallel. Additionally, from the summary, it shows that $p$-value for $H_0: \mu_{low}=\mu_{high}$ is 0.2771 \> 0.05 and $p$-value for $H_0: \mu_{isolated}=\mu_{high}$ is 0.0545 \> 0.05. Therefore, we reject both of them, and this dependence is similar under all three conditions of sexual activity.
 
 ## d)
+
 ```{r}
 summary(ffaov)$r.squared
 summary(fflm)$r.squared
 ```
-The analyses with thorax length is preferred, because the one with thorax length has a explained variance of 70.9%, but the one without thorax length has only 35%. None of them is wrong. 
+
+The analyses with thorax length is preferred, because the one with thorax length has a explained variance of 70.9%, but the one without thorax length has only 35%. None of them is wrong.
 
 ## e)
-```{r,echo=FALSE}
+
+```{r,echo=FALSE, compress = T, fig.width = 5, fig.height = 3}
 par(mfrow=c(1,2))
 plot(fflm,2);plot(fflm,1)
 ```
+
 ```{r}
 mean(ffdata$thorax)
 ```
+
 ```{r}
 shapiro.test(residuals(fflm))
 ```
+
 By checking QQ-plot and residuals vs. fitted plot, ANCOVA with thorax length and activity are independent to each other. In addition, we did not find certain patterns exist in the graph, even though they look normally distributed which is also checked by Shapiro-Wilk normality test.
 
 ## f)
+
 ```{r}
 fflaov=lm(longevity~thorax+activity, data=ffdata)
 anova(fflaov)
 ```
+
 Even without the logarithm, the ANCOVA shows very similar with the one with logarithm.
-```{r}
+
+```{r, echo=FALSE, compress = T, fig.width = 5, fig.height = 3}
 par(mfrow=c(1,2))
 plot(fflaov,2);plot(fflaov,1)
 ```
+
 The graphs show that the residuals are normally distributed. And we can see a certain pattern existing in residuals fitted plot. This is also supported by Shapiro-Wilk normality test below.
+
 ```{r}
 shapiro.test(residuals(fflaov))
 ```
+
 However, the variance of residuals is getting larger as the the estimates gets larger. It does not reliable. Moreover, it is wise to use the model with logarithm.
+
+# Exercise 2.
+
+## a)
+
+```{r,echo=FALSE, compress = T, fig.width = 5, fig.height = 3}
+data = read.table('titanic.txt', header=T)
+attach(data)
+survivars_age = Age[Survived == 1]
+not_survivars_age = Age[Survived == 0]
+boxplot(Age, survivars_age, not_survivars_age)
+```
+
+In boxplot (1) we have the age of all the passengers, (2) represent the ages of all surviving passengers and in (3) we have the ages of the passengers that didn't survive. It can be observed from the boxplot above tat the age didn't have any major impact in someone surviving or not.
+
+```{r, echo=FALSE, compress = T, fig.width = 5, fig.height = 3}
+surv_fem = table(Survived[Sex == "female"])
+surv_men = table(Survived[Sex == "male"])
+
+par(mfrow=c(1,2))
+barplot(surv_fem , ylab="Number of survivors", xlab="Female")
+barplot(surv_men, ylab="Number of survivors", xlab="Men")
+```
+
+We can observe a clear difference in between the two barplots, to be more precise the number of female survivors is much more higher than the one of male survivors. Contrary in the case of non-surviving passengers the number of females is smaller than the number of males.
+
+```{r, echo=FALSE, compress = T, fig.width = 5, fig.height = 3}
+surv_1cls = table(Survived[PClass == "1st"])
+surv_2cls = table(Survived[PClass == "2nd"])
+surv_3cls = table(Survived[PClass == "3rd"])
+
+par(mfrow=c(1,3))
+barplot(surv_1cls, ylab="Number of survivors", xlab="1st Class")
+barplot(surv_2cls, ylab="Number of survivors", xlab="2nd Class")
+barplot(surv_3cls, ylab="Number of survivors", xlab="3rd Class")
+```
+
+More differences can be observed in the survival rates of the passengers from the 3 classes. In the 1 class we can see that the number of survivors is higher than the number of non-survivors, unfortunately we can not say the same for the other 2 classes where the number non-survivors is higher than the number of survivors. This can be observed mostly in the 3rd class where the number of non-survivors is 4 times bigger than the number of survivors. One common thing that can be observed for all classes is that the number of survivors is between 100 and 200 for all 3 of them.
+
+## b)
+
+```{r}
+fact_PClass = factor(PClass)
+fact_Sex = factor(Sex)
+fact_Age = factor(Age)
+titglm = glm(Survived ~ fact_PClass + fact_Sex + fact_Age, data = data, family=binomial)
+#summary(titglm, maxsum = 10)
+```
+
+Because of the big number of variable that appear in the summary is recommended to use Age as a numerical variable rather than a factorial one, but this change will affect the model, some of the rows will not appear, because the Age is not present (NA), and the glm model will just ignore those rows.
+
+```{r}
+titglm_f = glm(Survived ~ fact_PClass + fact_Sex + Age, data = data, family=binomial)
+summary(titglm_f)
+```
+
+After computing the smaller model we can compute all the odds by summing all the Estimates of the factors that are of interest and applying exp(sum), which translates to e to the power of the sum.
+
+```{r}
+exp(coef(titglm_f))
+```
+
+```{r, echo=FALSE}
+cat("odds of 1st class + female + age =", exp(3.759662 - 0 - 0 - 0.039177), "\n")
+cat("odds of 1st class + male + age =", (3.759662 - 0 - 2.631357 - 0.039177), "\n")
+cat("odds of 2st class + female + age =", exp(3.759662 - 1.291962 - 0 - 0.039177), "\n")
+cat("odds of 2st class + male + age =", exp(3.759662 - 1.291962 - 2.631357 - 0.039177), "\n")
+cat("odds of 3st class + female + age =", exp(3.759662 - 2.521419 - 0 - 0.039177), "\n")
+cat("odds of 3st class + male + age =", exp(3.759662 - 2.521419 - 2.631357 - 0.039177), "\n")
+```
+
+After computing the we can observe that the same trends that where present in the graphs from point **a)** are present also here. More exactly the female have a higher odds than male and as the class is lower the odds of survival also decrease. Based on this we can see that the biggest odds of survival are for the females from the 1st class, while the worst ones are for the male in the 3rd class.
+
+## c)
+
+```{r}
+glm1 = glm(Survived ~ Age * fact_Sex, data = data, family=binomial)
+anova(glm1, test="Chisq")
+```
+
+After verifying the interaction between the factors (Sex) and the numerical variable (Age) we obtain a $p$-value of 5.64e-07 which is smaller than 0.05. Because of this we can conclude that we will reject $H0$ so the numerical variable Age does have a big influence over the outcome so it is not recommended to eliminate it from the model.
+
+```{r}
+glm2 = glm(Survived ~ Age * fact_PClass, data = data, family=binomial)
+anova(glm2, test="Chisq")
+```
+
+After verifying the interaction between the two factors (Class) and the numerical variable (Age) we obtain a $p$-value of 0.558 which is bigger than 0.05. Because of this we can conclude that we will not reject $H0$ so the numerical variable Age does not have a big influence over the outcome so we can eliminate it from the model.
+
+Because of the interaction between Age and PClass we will create a model that is not dependent on Age.
+
+```{r,echo=FALSE}
+titglm2 = glm(Survived ~ fact_PClass + fact_Sex, data = data, family=binomial)
+```
+
+Because the variable Age doesn't have major influence in the outcome we can create a model that does not include it.
+
+```{r}
+p1m = predict(titglm2, data.frame(fact_PClass = "1st", fact_Sex = "male", Age = "53"), type="response")
+p2m = predict(titglm2, data.frame(fact_PClass = "2nd", fact_Sex = "male", Age = "53"), type="response")
+p3m = predict(titglm2, data.frame(fact_PClass = "3rd", fact_Sex = "male", Age = "53"), type="response")
+p1f = predict(titglm2, data.frame(fact_PClass = "1st", fact_Sex = "female", Age = "53"), type="response")
+p2f = predict(titglm2, data.frame(fact_PClass = "2nd", fact_Sex = "female", Age = "53"), type="response")
+p3f = predict(titglm2, data.frame(fact_PClass = "3rd", fact_Sex = "female", Age = "53"), type="response")
+```
+
+We can use the **predict()** function to predict information about a specific group of passengers. But the problem is that the predicted value is given in probability instead of odds, so we have to transform it in odds.
+
+```{r, echo=FALSE}
+cat("odds of 1st class + male + age(53) =", p1m / (1 - p1m), "\n")
+cat("odds of 2nd class + male + age(53) =", p2m / (1 - p2m), "\n")
+cat("odds of 3rd class + male + age(53) =", p3m / (1 - p3m), "\n")
+cat("odds of 1st class + female + age(53) =", p1f / (1 - p1f), "\n")
+cat("odds of 2nd class + female + age(53) =", p2f / (1 - p2f), "\n")
+cat("odds of 3rd class + female + age(53) =", p3f / (1 - p3f), "\n")
+```
+
+After transforming the probabilities in odds it can be observed that the same pattern is maintained, mainly that the odds for survival for females are higher than the ones for males and as the class increase the odds decrease.
+
+## d)
+
+One method to predict the survival status would be to split the data in 3 categories:
+
+-   Training data
+
+-   Validation data
+
+-   Test data
+
+THe training data can be used to create a model and to optimize it (obtain the maximum likelihood of teta_hat). After the model has been train we can try and use the validation data to predict how will the model predict the outcome. If the accuracy of the model on the validation data is as good or better than the imposed threshold we can move to the next step, test the model on the test data. This is one of the most important steps, because it can offer us a pretty good measurement of the model accuracy. It is recommended to not use the test data more than a few times (is ideal to use it only once) to test the model.
+
+If the model offers a good accuracy on the test data then we can say that our model will perform pretty well in a real scenario.
+
+## e)
+
+```{r,echo=FALSE}
+tot_class = xtabs(~ Survived + fact_PClass)
+tot_class
+```
+
+Using the contingency table for the two factors PClass and Survived it can be observed that the trends present in the graphs presented above is maintained.
+
+```{r}
+tot_ch = chisq.test(tot_class)
+tot_ch
+```
+
+Because the $p$-value is equal with 2.2e-16 which is smaller then 0.05, it can be concluded that we reject the null hypotheses H0. This means that there is a dependence between the two factors PClass and Survived.
+
+```{r}
+tot_sex = xtabs(~ Survived + fact_Sex)
+tot_sex
+```
+
+Using the contingency table for the two factors Sex and Survived it can be observed that the trends present in the graphs presented above is maintained.
+
+```{r}
+fisher.test(tot_sex)
+```
+
+After applying the Fisher test we obtain a $p$-value equal with 2.2e-16 which is smaller then 0.05, so it can be concluded that we reject the null hypotheses H0. This means that there is a dependence between the two factors Sex and Survived.
+
+## f)
+
+Yes, the second approach is wring because it only test one factor at a time instead of both at the same time. On advantage of this approach is that we can test and see the influence of each factor separately on the Survived status.Based on this approach we can discard the factors that do not influence the outcome. One disadvantage is that we can only test one variable at at time and we can not see if there is any influence between two factors (ex: between PClass and Sex).
+
+The first method is much more suitable for this kind of analyses, having the advantage that we can also see the influence that different factors have on the outcome. But of course that there are also disadvantages, mainly that we may take into account factors that do not have a big influence on our output (ex: Age).
+
+# Exercise 3.
+
+## a)
+
+```{r, echo=FALSE}
+africa = read.table("africa.txt", header = T)
+africa$pollib = as.factor(africa$pollib)
+attach(africa)
+miltcoup = as.numeric(miltcoup)
+
+par(mfrow=c(2,4))
+hist(miltcoup); hist(oligarchy)
+hist(parties); hist(pctvote)
+hist(popn); hist(size)
+hist(numelec); hist(numregim)
+```
+
+The distribution of the used variables, as well as the relation between independent variables were analysed and no indications for multicolinearity have been found. Some outliers for the variables parties, population and size were found. However, they were not removed due to the influence the removal might have on the sample size.
+
+```{r, echo=FALSE}
+par(mfrow=c(1,1)); pairs(africa[-3])
+```
+
+```{r}
+mean(miltcoup)
+var(miltcoup)
+```
+
+A Poisson regression was performed on the full data set "africa", with the number of successful military coups ("miltcoup") as response variable. The other variables from the dataset are used as explanatory variables. Since the mean (=2.44) is similar to the variance (=2.13), the dependent variable seems to stem from a Poisson distribution.
+
+```{r}
+africalm = glm(miltcoup~oligarchy+pollib+parties+pctvote+popn+size+numelec+numregim, family=poisson)
+summary(africalm)
+```
+
+```{r}
+pollib2 = as.numeric(pollib)
+pollib2[pollib2 == 1] <- 4; pollib2[pollib2 == 3] <- 1; pollib2[pollib2 == 4] <- 3
+
+pollib2 = as.factor(pollib2); contrasts(pollib2) = contr.sum
+summary(glm(miltcoup~oligarchy+pollib2+parties+pctvote+popn+size+numelec+numregim, family=poisson))
+```
+
+```{r, echo=FALSE, compress = T, fig.width = 5, fig.height = 3}
+plot(log(fitted(africalm)), residuals(africalm), main="Residuals against log of fitted values")
+```
+
+By analysing the results of the Poisson regression, it can be concluded that the factors "oligarchy", "parties" and "pollib" had a significant effect on the number of successful military coups from independence to 1989 and both oligarchy and parties had a positive impact on "miltcoup", as follows:
+
+-   the number of years the country was ruled by a military oligarchy (oligarchy): z = 2.053, p = 0.040
+
+-   the number of legal political parties ("parties"): z = 2.796, p = 0.005
+
+-   the political liberalization ("pollib")
+
+Furthermore, it can be observed that with a political liberalization of full civil rights (2), the estimated number of successful coups is lower than for other political liberalizations, with z = -2.689 and p = 0.007.
+
+## b)
+
+To reduce the number of explanatory variables, as most of the 8 independent variables are not significant for the output, the step down approach was used.
+
+First, the model with all predictors was analysed. The variable "numelec" was removed first, as it it the the least significant. By repeating the process several times, "numregim", "size", "popn", "pctvote" have also been removed.
+
+```{r}
+summary(glm(miltcoup~oligarchy+pollib+parties+pctvote+popn+size+numelec+numregim, family=poisson, data = africa))
+```
+
+```{r, echo=FALSE, compress = T, fig.width = 5, fig.height = 3}
+final_model = glm(miltcoup~oligarchy+pollib+parties, family=poisson, data = africa)
+plot(log(fitted(final_model)), residuals(final_model), main="Residuals against log of fitted values")
+```
+
+```{r, echo=FALSE}
+par(mfrow=c(3,3))
+plot(oligarchy, residuals(final_model))
+plot(parties, residuals(final_model))
+plot(numelec, residuals(final_model))
+plot(numregim, residuals(final_model))
+plot(size, residuals(final_model))
+plot(popn, residuals(final_model))
+plot(pctvote, residuals(final_model))
+```
+
+The resulting model consists of "oligarchy", "pollib" and "parties" - which were the only significant predictors in the complete model (from point a) as well, while the relation with the dependent variable remains the same as previously discussed. To investigate the distrubution of the residuals, they were plotted against the logarithm of the fitted values, yet no pattern was found in the obtained plot. To verify if any patterns emerge from the predictors, the residuals of the model were plotted against all the explanatory variables. However, the obtained plots showed no pattern that might indicate the need for a transformation (for the included variables) or an inclusion (for the excluded variables).
