@@ -12,7 +12,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-###  **Exercise 1.** *Birthweights*
+### **Exercise 1.** *Birthweights*
 
 The data set birthweight.txt contains the birthweights of 188 newborn babies. We are interested in finding the underlying (population) mean mu of birthweights. a) Check normality of the data. Compute a point estimate for mu. Derive, assuming normality (irrespective of your conclusion about normality of the data), a bounded 90% confidence interval for mu.
 
@@ -39,7 +39,7 @@ cat("90% confidence interval = (", lower_bound,",", upper_bound, ")")
 
 After computing the confidence interval, it can be observed that 90% of the data is between 2829.202 and 2997.384.
 
-b) An expert claims that the mean birthweight is bigger than 2800, verify this claim by using a $t-test$. What is the outcome of the test if you take $alpha$ = 0.1? And other values of $alpha$?
+b)  An expert claims that the mean birthweight is bigger than 2800, verify this claim by using a $t-test$. What is the outcome of the test if you take $alpha$ = 0.1? And other values of $alpha$?
 
 ```{r}
 t.test(data$birthweight, mu=2800, alternative="greater")#Compute the t-test to check if the mean is bigger than 2800
@@ -47,7 +47,7 @@ t.test(data$birthweight, mu=2800, alternative="greater")#Compute the t-test to c
 
 If an $alpha$ of 0.1 is the set threshold, then the null hypothesis $H0$ is rejected and $H1$ fails to be rejected. In this case, the mean of the data is larger than 2800. The same result can be obtained if $alpha$\>=0.013, because the p-value is equal with 0.013. If $alpha$ has a value that is lower than 0.013 then we retain the null hypothesis $H0$.
 
-c) In the R-output of the test from b), also a confidence interval is given, but why is it different from the confidence interval found in a) and why is it one-sided?
+c)  In the R-output of the test from b), also a confidence interval is given, but why is it different from the confidence interval found in a) and why is it one-sided?
 
 The confidence interval found for point a) is calculated for a confidence interval of 90%, while the interval that is calculated when performing a t-test is 95% by default. In the case of the interval obtained at point b), one side of the interval is not defined because we are interested only in the values that are greater than our mean and we don't take into consideration if a value is smaller than our mean. Because of this the confidence interval, calculated at point b), the interval will be from the 10% quantile to infinity. This effect will also make the lower bound of the interval to be equal with the lower bound of the interval calculated at point a), even though they are calculated for different confidence intervals( 90%, 95% respectively).
 
@@ -60,7 +60,7 @@ t.test(data$birthweight, conf.level=0.9)
 
 After realizing the two tests we can observe that the values of the confidence interval are different from one another. Another observation is that in comparison to point b), the interval is defined on both sides, because in this case, we are interested in values on both sides on the mean, not just bigger.
 
-###  **Exercise 2.** *Power function of the t-test*
+### **Exercise 2.** *Power function of the t-test*
 
 We study the power function of the two-sample t-test (see Section 1.9 of Assignment 0). For n=m=30, mu=180, nu=175 and sd=5, generate 1000 samples x=rnorm(n,mu,sd) and y=rnorm(m,nu,sd), and record the 1000 p-values for testing H0 : mu=nu. You can evaluate the power (at point nu=175) of this t-test as fraction of p-values that are smaller than 0.05.
 
@@ -175,11 +175,11 @@ points(nu, power_c, type="l", col="green")#Plot the power obtained from point "c
 
 -   In the case of the green line, we can observe the opposite. We have drop in power level compared to the red line. In conclusion *increasing the standard deviation will decrease the power function*.
 
-###  **Exercise 4.** *Energy drink*
+### **Exercise 4.** *Energy drink*
 
 To study the effect of energy drink a sample of 24 high school pupils were randomized to drinking either a softdrink or an energy drink after running for 60 meters. After half an hour they were asked to run again. For both sprints they were asked to sprint as fast they could, and the sprinting time was measured. The data is given in the file run.txt. [Courtesy class 5E, Stedelijk Gymnasium Leiden, 2010.]
 
-a) Disregarding the type of drink, test whether the run times before drink and after are correlated.
+a)  Disregarding the type of drink, test whether the run times before drink and after are correlated.
 
 The first step is to create a histogram and a QQ-plot for the two data sets to verify normality of distribution.
 
@@ -210,7 +210,7 @@ t.test(data_4$before - data_4$after)
 
 After performing the t-test in two different ways and getting the same result we can conclude that we fail to reject the null hypothesis $H0$.
 
-b) Test separately, for both the softdrink and the energy drink conditions, whether there is a difference in speed in the two running tasks.
+b)  Test separately, for both the softdrink and the energy drink conditions, whether there is a difference in speed in the two running tasks.
 
 ```{r}
 energy_data_before = data_4$before[data_4[,3] == "energy"]
@@ -250,7 +250,7 @@ t.test(lemo_data_before - lemo_data_after)
 
 After performing the two t-tests and obtaining the same p-value from both of them we can get to the conclusion that we fail to reject the null hypothesis $H0$.
 
-c) For each pupil compute the time difference between the two running tasks. Test whether these time differences are effected by the type of drink.
+c)  For each pupil compute the time difference between the two running tasks. Test whether these time differences are effected by the type of drink.
 
 ```{r}
 child_time = numeric(length(data_4$before))
@@ -277,11 +277,11 @@ t.test(lemo_child_time - energy_child_time)
 
 After performing the two t-tests and obtaining the same p-value from both of them we can get to the conclusion that we fail to reject the null hypothesis $H0$.
 
-d) Can you think of a plausible objection to the design of the experiment in b) if the main aim was to test whether drinking the energy drink speeds up the running? Is there a similar objection to the design of the experiment in c)? Comment on all your findings in this exercise.
+d)  Can you think of a plausible objection to the design of the experiment in b) if the main aim was to test whether drinking the energy drink speeds up the running? Is there a similar objection to the design of the experiment in c)? Comment on all your findings in this exercise.
 
 Yes, there are two improvement that can be applied for design experiment for point b) and c). The first one is to implement *crossover experimental design*, in this way we can eliminate bias. The second improvement is to increase the sample size so that we can have a better representation of the two distributions.
 
-###  **Exercise 5.** *Chick weights*
+### **Exercise 5.** *Chick weights*
 
 The dataset chickwts is a data frame included in the standard R installation, to view it, type chickwts at the R prompt. This data frame contains 71 observations on newly-hatched chicks which were randomly allocated among six groups. Each group was given a different feed supplement for six weeks, after which their weight (in grams) was measured. The data frame consists of a numeric column giving the weights, and a factor column giving the name of the feed supplement.
 
