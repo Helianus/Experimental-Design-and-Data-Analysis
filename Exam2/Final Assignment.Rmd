@@ -1,0 +1,178 @@
+---
+title: "Final Assignment 2"
+author: "Andrei Udriste - "
+date: "5/12/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+data = read.table("treeVolume.txt", header = TRUE)
+
+beech_tree = data$volume[data$type == "beech"]
+oak_tree = data$volume[data$type == "oak"]
+```
+
+#### a)
+
+```{r}
+length(beech_tree)
+```
+
+```{r}
+boxplot(beech_tree, oak_tree)
+```
+
+```{r}
+data$type = factor(data$type)
+model = lm(data$volume ~ data$type)
+anova(model)
+```
+
+After creating a ANOVA model and running it we obtain that the p-value is equal with 0.1736, which is much more bigger than 0.05 this means that we do not reject the null hypotheses H0. Because the null hypotheses H0 has not been rejected the tree type does not have any influence on the volume of the tree.
+
+```{r}
+cat("\n beech prediction =", predict(model, data.frame(type="beech"), type="response")[1], "\n")
+cat("mean of the volume for the beech trees", mean(beech_tree), "\n")
+cat("\n oak prediction =", predict(model, data.frame(type="oak"), type="response")[50], "\n")
+cat("mean of the volume for the oak trees", mean(oak_tree))
+```
+
+After prediction the volume for the beech tree and the oak tree using the function predict, we obtain the following values:
+
+-   beech tree volume = 30.1709
+
+-   oak tree volume = 35.25
+
+One observation would be that the predicted value are the same as the mean of the volume for each tree type, this could be seen in the print statement from above.
+
+#### b)
+
+If we want to use the t.test in this case we need to check whatever the data is from a normal distribution, because the t.test can be used only on data that comes from a normal distribution.
+
+```{r}
+par(mfrow=c(1,2))
+qqnorm(beech_tree)
+qqnorm(oak_tree)
+```
+
+The first method to check whatever the data comes from a normal distribution would be to plot a QQ-plot using the data and see if it creates a straight line. If we observe the two QQ-plots for the volume of beech trees and oak trees, we can observe that the QQ-plot for the oak trees has somewhat of a straight line, but the QQ-plot for the beech trees is not straight. This would indicate that the data does not come from a normal distribution so we can not preform a t.test on this type of data. Another way to extra check if the data comes from a normal distribution is to perform a Shapiro test, and to obtain a p-value bigger than 0.05.
+
+```{r}
+shapiro.test(beech_tree)
+```
+
+```{r}
+shapiro.test(oak_tree)
+```
+
+After performing the Shapiro test on both datasets we can observe the same result as the one obtained from the QQ-plots. The beech tree data has a p-value of 0.003579 \< 0.05 this would mean that we reject the null hypotheses H0, so the data does not come from a normal distribution. If we look at the p-value for the oak trees we obtain a value of 0.0819 \> 0.05 this means that we do not reject the null hypotheses H0, so the data comes from a normal distribution, but the value of the p-value is not that bigger than 0.05 so is not that wise to work with this assumption.
+
+Because the data does not come from a normal distribution is it much more appropriate t use test that do not rely on normality like Mann-Whitney and Kolmogorov-Smirnov. Those test rely on ranks so there is no need for normality.
+
+```{r}
+wilcox.test(beech_tree, oak_tree)
+```
+
+After performing the Mann-Whitney we obtain a p-value of 0.0427 \< 0.05, this means that we have to reject the null hypotheses H0, so there is no correlation between the volume of beech and the volume of oak tree types, but again the value of the p-value is relatively close to the threshold of 0.05 so is not wise to completely trust the test.
+
+```{r}
+ks.test(beech_tree, oak_tree)
+```
+
+After performing the Kolmogorov-Smirnov we obtain a p-value of 0.03072 \< 0.05, this means that we have to reject the null hypotheses H0, so there is no correlation between the volume of beech and the volume of oak tree types. In this case the p-value is much more further than the Mann-Whitney so there is much more confidence in reject the null hypotheses H0.
+
+On thing that is common in both test is the fact that the we obtain values similar to the ANOVA model created at point a), but in that case we did not reject the null hypotheses because the p-value was bigger than 0.05, but in this case we had to reject the null hypotheses for both tests.
+
+#### c)
+
+```{r}
+
+data$type = factor(data$type)
+model_c = lm(data$volume ~ data$type + data$diameter + data$height)
+anova(model_c)
+```
+
+If we perform an ANOVA test using also the diameter and the height we obtain that the p-value for the type has now change and is equal with 1.56e-07 \< 0.05, this means that now we reject the null hypotheses H0, so there is an influence between the tree type and the volume of the tree. This is completely different from point a where we found that there the type of the tree does not have any influence on the volume.
+
+```{r}
+predicted_values = predict(model_c, data.frame(type="beech", diameter=mean(data$diameter), height=mean(data$height)), type="response")
+
+beech_pred = 0
+for(i in 1:length(beech_tree)){
+  beech_pred = beech_pred + predicted_values[i]
+}
+
+oak_pred = 0
+for(i in length(beech_tree):length(predicted_values)){
+  oak_pred = oak_pred + predicted_values[i]
+}
+
+cat("\n beech prediction =", beech_pred / length(beech_tree))
+cat("\n oak prediction =", oak_pred / length(oak_tree))
+```
+
+The predicted value for the two tree types are:
+
+-   beech tree volume = 30.17097 30.1709
+
+-   oak tree volume = 37.72496 35.25
+
+In the case of the beech trees we can see that there is no difference in the prediction, we obtain the same value as the prediction made at point a, 30.1709. In the case of the oak trees we obtain a different value from the prediction made at point a. The prediction made at point a was 35.25, while the prediction made with the new model is 37.724, which is with two point higher than the old prediction. This means that the height and the diameter of the tree does influence the model.
+
+#### d)
+
+```{r}
+beech_diam = data$diameter[data$type == "beech"]
+oak_diam = data$diameter[data$type == "oak"]
+```
+
+```{r}
+model_d_d = lm(data$volume ~ data$diameter)
+anova(model_d_d)
+```
+
+If we create an ANOVA model only using the volume on the diameter of the tree we can observe the influence of the diameter over the volume. After running the model we obtain a p-value of 2.2e-16 \< 0.05, this means that we reject the null hypotheses H0, so the diameter of the tree has very big influence over the volume of the tree.
+
+```{r}
+model_d_b = lm(beech_tree ~ beech_diam)
+anova(model_d_b)
+```
+
+If we run the ANOVA model but this time using only the data from the beech trees we obtain a p-value = 2.2e-16 \< 0.05, so this means that we reject the null hypotheses HO, so the diameter has a very big influence over the volume of the beech trees.
+
+```{r}
+model_d_o = lm(oak_tree ~ oak_diam)
+anova(model_d_o)
+```
+
+But if we run the same test but in this case we use the data for the oak trees we obtain a p-value equal with 7.238e-14 \< 0.05 so we still reject the null hypotheses H0, but we can see that this p-value is higher than the one obtained from the beech trees so the diameter doesn't have such a big influence over the volume as in the case of the beech trees.
+
+```{r}
+beech_height = data$height[data$type == "beech"]
+oak_height = data$height[data$type == "oak"]
+```
+
+```{r}
+model_d_h = lm(data$volume ~ data$height)
+anova(model_d_h)
+```
+
+We can perform the ANOVA test the same way for the height of the trees an we obtain a p-value = 0.000654 \< 0.05 this means that we reject the null hypotheses H0, so the height of the tree has an influence over the volume of the tree, but we can see that the p-value in this case is much more higher than the p-value obtained when we used the diameter of the tree. This means that the diameter of the tree has a bigger influence over the volume of the tree than the height.
+
+```{r}
+model_d_b_h = lm(beech_tree ~ beech_height)
+anova(model_d_b_h)
+```
+
+If we perform an ANOVA test using only the data from the beech trees we obtain a p-value = 0.000378 \< 0.05 so we reject the null hypotheses H0, this means that the height of the tree has an influence over the volume of the beech trees.
+
+```{r}
+model_d_o_h = lm(oak_tree ~ oak_height)
+anova(model_d_o_h)
+```
+
+If we perform an ANOVA test using the oak data, we obtain a p-value of 0.427 \> 0.05, this means that we do not reject he null hypotheses H0, this means that there is no influence between the height of the oak trees and their volume. Which is the exact opposite case from the beech trees where the height of the trees had an influence over the volume.
